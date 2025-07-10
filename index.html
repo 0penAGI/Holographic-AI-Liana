@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f5f5f7;
+            background: linear-gradient(45deg, #e0e0e0, #f0f0f0);
             color: #1c1c1e;
             height: 100vh;
             display: flex;
@@ -35,25 +35,23 @@
 
         .chat-header {
             padding: 16px;
-            background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+            background: rgba(255, 255, 255, 0.7); /* Увеличьте прозрачность */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             color: white;
             font-weight: 314;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Тонкая граница */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Легкая тень */
         }
 
+        /* Убираем текущую границу ::after, так как заменили на border-bottom */
         .chat-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
+            content: none;
         }
-
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -125,37 +123,43 @@
 
         .chat-input-container {
             padding: 11px 15px;
-            background: white;
-            border-top: 1px solid #e5e5ea;
+            background: rgba(255, 255, 255, 0.7); /* Полупрозрачный фон */
+            backdrop-filter: blur(10px); /* Размытие заднего плана */
+            -webkit-backdrop-filter: blur(10px); /* Для поддержки в Safari */
             display: flex;
             gap: 8px;
             position: relative;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.1); /* Легкая тень вверх */
         }
-
         .chat-input {
             flex: 1;
             padding: 11px 13px;
-            border: 1px solid #e5e5ea;
+            border: 1px solid rgba(255, 255, 255, 0.7);
             border-radius: 21px;
             font-size: 11px;
             outline: none;
             transition: all 0.3s ease;
-            background: #f9f9fb;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: #1c1c1e;
         }
 
         .chat-input:focus {
             border-color: #007aff;
-            background: white;
-            box-shadow: 0 0 0 2px rgba(0,122,255,0.1);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
         }
-
+        
         .send-button {
             padding: 0;
             width: 33px;
             height: 33px;
-            background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+            background: rgba(255, 255, 255, 0.2); /* Полупрозрачный фон */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             color: white;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             font-size: 11px;
             cursor: pointer;
@@ -163,9 +167,9 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 10px rgba(0,122,255,0.2);
+            box-shadow: 0 2px 10px rgba(0, 122, 255, 0.2);
         }
-
+        
         .send-button:hover {
             transform: scale(1.1);
         }
@@ -359,29 +363,33 @@
         }
 
         @media (prefers-color-scheme: dark) {
-            body {
-                background: #1c1c1e;
+            .chat-header {
+                background: linear-gradient(45deg, #121212, #222222);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
                 color: #f6f6f7;
             }
-            .chat-messages, .chat-input-container {
-                background: #2c2c2e;
+
+            .chat-input-container {
+                background: rgba(0, 0, 0, 0.7); /* Полупрозрачный темный фон */
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.2);
             }
-            .message.ai {
-                background: #3a3a3c;
-                color: #f5f5f7;
-            }
-            .message.ai::before {
-                border-right-color: #3a3a3c;
-            }
+
             .chat-input {
-                background: #2c2c2e;
-                border-color: #444446;
-                color: white;
+                background: rgba(255, 255, 255, 0.1); /* Прозрачное поле ввода */
+                border-color: rgba(255, 255, 255, 0.2);
+                color: #f6f6f7;
             }
+
             .chat-input:focus {
-                background: #1c1c1e;
+                background: rgba(255, 255, 255, 0.15);
                 border-color: #007aff;
             }
+        }
             .context-menu {
                 background: #3a3a3c;
                 border: 1px solid #444446;
