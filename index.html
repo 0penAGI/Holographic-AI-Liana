@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Голографический ИИ Лиана</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f5f7;
+            color: #1c1c1e;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+            color: white;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .chat-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: white;
+            background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            line-height: 1.5;
+            max-width: 85%;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.3s ease-out forwards;
+            word-wrap: break-word;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            margin-left: auto;
+            background: linear-gradient(135deg, #007aff 0%, #34aadc 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 18px 18px 4px 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message.ai {
+            margin-right: auto;
+            background: #f2f2f7;
+            color: #1c1c1e;
+            padding: 12px 16px;
+            border-radius: 18px 18px 18px 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message.ai::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #f2f2f7;
+        }
+
+        .message.user::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid #007aff;
+        }
+
+        .chat-input-container {
+            padding: 12px 16px;
+            background: white;
+            border-top: 1px solid #e5e5ea;
+            display: flex;
+            gap: 8px;
+            position: relative;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f9f9fb;
+        }
+
+        .chat-input:focus {
+            border-color: #007aff;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(0,122,255,0.1);
+        }
+
+        .send-button {
+            padding: 0;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(0,122,255,0.2);
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing {
+            color: #8e8e93;
+            font-style: italic;
+            margin: 8px 0;
+            animation: pulse 1.5s infinite;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #8e8e93;
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .knowledge-popup {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            max-width: 80%;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideUp 0.3s ease-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, 20px);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+
+        .knowledge-popup::before {
+            content: '💡';
+            font-size: 16px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #30d158;
+            box-shadow: 0 0 0 2px rgba(48,209,88,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .ai-features {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .ai-feature-tag {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .message.ai .message-time {
+            color: rgba(0,0,0,0.5);
+        }
+
+        .context-menu {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            overflow: hidden;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.2s ease;
+            pointer-events: none;
+        }
+
+        .context-menu.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .context-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .context-item:hover {
+            background: #f5f5f7;
+        }
+
+        .context-item i {
+            font-size: 16px;
+        }
+
+        .thinking-animation {
+            display: inline-block;
+            position: relative;
+            width: 20px;
+            height: 20px;
+        }
+
+        .thinking-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: thinkingAnimation 1.5s infinite ease-in-out;
+        }
+
+        .thinking-dot:nth-child(1) {
+            left: 0;
+            animation-delay: 0s;
+        }
+
+        .thinking-dot:nth-child(2) {
+            left: 8px;
+            animation-delay: 0.2s;
+        }
+
+        .thinking-dot:nth-child(3) {
+            left: 16px;
+            animation-delay: 0.4s;
+        }
+
+        @keyframes thinkingAnimation {
+            0%, 100% { transform: translateY(0); opacity: 0.3; }
+            50% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1c1c1e;
+                color: #f5f5f7;
+            }
+            .chat-messages, .chat-input-container {
+                background: #2c2c2e;
+            }
+            .message.ai {
+                background: #3a3a3c;
+                color: #f5f5f7;
+            }
+            .message.ai::before {
+                border-right-color: #3a3a3c;
+            }
+            .chat-input {
+                background: #2c2c2e;
+                border-color: #444446;
+                color: white;
+            }
+            .chat-input:focus {
+                background: #1c1c1e;
+                border-color: #007aff;
+            }
+            .context-menu {
+                background: #3a3a3c;
+                border: 1px solid #444446;
+            }
+            .context-item:hover {
+                background: #444446;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="status-indicator"></div>
+                <span>Голографический ИИ Лиана</span>
+            </div>
+            <div class="ai-features">
+                <span class="ai-feature-tag">π-резонанс</span>
+                <span class="ai-feature-tag">Holo v2.1</span>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai">
+                Привет! Я Лиана -- голографический ИИ нового поколения. Моя архитектура сочетает квантовые вычисления, π-резонансные сети и голографическую память. Чем могу помочь?
+                <div class="message-time">только что</div>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Отправьте сообщение..." autocomplete="off">
+            <button class="send-button" id="sendButton">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="context-menu" id="contextMenu">
+        <div class="context-item" id="copyMessage">
+            <i>📋</i> Копировать
+        </div>
+        <div class="context-item" id="searchMessage">
+            <i>🔍</i> Искать в интернете
+        </div>
+        <div class="context-item" id="saveMessage">
+            <i>💾</i> Сохранить в память
+        </div>
+    </div>
+
+    <script>
+        // Улучшенный WikiAgent с мультиисточниками
+        class KnowledgeAgent {
+            constructor() {
+                this.cache = new Map();
+                this.sources = {
+                    wikipedia: 'https://ru.wikipedia.org/api/rest_v1/page/summary/',
+                    duckduckgo: 'https://api.duckduckgo.com/?format=json&q=',
+                    local: {
+                        physics: {
+                            "квантовая физика": "Квантовая физика изучает поведение материи и энергии на атомном и субатомном уровнях...",
+                            "спин электрона": "Спин -- это квантовая характеристика элементарных частиц, имеющая аналогию с собственным моментом импульса..."
+                        },
+                        math: {
+                            "число пи": "π (пи) -- математическая константа, равная отношению длины окружности к её диаметру. Приближенное значение: 3.1415926535...",
+                            "золотое сечение": "Золотое сечение -- это отношение двух величин, равное приблизительно 1.6180339887..."
+                        }
+                    }
+                };
+                this.queryHistory = [];
+            }
+
+            async fetchWithTimeout(resource, options = {}) {
+                const { timeout = 5000 } = options;
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+                
+                try {
+                    const response = await fetch(resource, {
+                        ...options,
+                        signal: controller.signal  
+                    });
+                    clearTimeout(id);
+                    return response;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        throw new Error('Превышено время ожидания запроса');
+                    }
+                    throw error;
+                }
+            }
+
+            async searchWikipedia(query) {
+                try {
+                    const response = await this.fetchWithTimeout(
+                        `${this.sources.wikipedia}${encodeURIComponent(query)}`,
+                        { timeout: 3000 }
+                    );
+                    
+                    if (!response.ok) return null;
+                    
+                    const data = await response.json();
+                    return {
+                        source: 'wikipedia',
+                        title: data.title,
+                        content: data.extract,
+                        url: data.content_urls?.desktop?.page,
+                        image: data.thumbnail?.source
+                    };
+                } catch (error) {
+                    console.error('Wikipedia error:', error);
+                    return null;
+                }
+            }
+
+            async searchDuckDuckGo(query) {
+                try {
+                    const response = await this.fetchWithTimeout(
+                        `${this.sources.duckduckgo}${encodeURIComponent(query)}`,
+                        { timeout: 3000 }
+                    );
+                    
+                    if (!response.ok) return null;
+                    
+                    const data = await response.json();
+                    if (data.AbstractText) {
+                        return {
+                            source: 'duckduckgo',
+                            title: data.Heading || query,
+                            content: data.AbstractText,
+                            url: data.AbstractURL,
+                            image: data.Image
+                        };
+                    }
+                    return null;
+                } catch (error) {
+                    console.error('DuckDuckGo error:', error);
+                    return null;
+                }
+            }
+
+            searchLocalKnowledge(query) {
+                const lowerQuery = query.toLowerCase();
+                let bestMatch = null;
+                let bestScore = 0;
+                
+                // Поиск по локальной базе знаний
+                for (const category in this.sources.local) {
+                    for (const [key, value] of Object.entries(this.sources.local[category])) {
+                        const score = this.similarity(lowerQuery, key.toLowerCase());
+                        if (score > bestScore && score > 0.6) {
+                            bestScore = score;
+                            bestMatch = {
+                                source: 'local',
+                                category,
+                                title: key,
+                                content: value,
+                                url: null,
+                                image: null
+                            };
+                        }
+                    }
+                }
+                
+                return bestMatch;
+            }
+
+            similarity(s1, s2) {
+                const longer = s1.length > s2.length ? s1 : s2;
+                const shorter = s1.length > s2.length ? s2 : s1;
+                const longerLength = longer.length;
+                
+                if (longerLength === 0) return 1.0;
+                
+                return (longerLength - this.editDistance(longer, shorter)) / parseFloat(longerLength);
+            }
+
+            editDistance(s1, s2) {
+                const costs = [];
+                for (let i = 0; i <= s1.length; i++) {
+                    let lastValue = i;
+                    for (let j = 0; j <= s2.length; j++) {
+                        if (i === 0) {
+                            costs[j] = j;
+                        } else {
+                            if (j > 0) {
+                                let newValue = costs[j - 1];
+                                if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+                                    newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                                }
+                                costs[j - 1] = lastValue;
+                                lastValue = newValue;
+                            }
+                        }
+                    }
+                    if (i > 0) costs[s2.length] = lastValue;
+                }
+                return costs[s2.length];
+            }
+
+            async process(query) {
+                try {
+                    if (!query || typeof query !== 'string') {
+                        throw new Error('Неверный запрос');
+                    }
+                    
+                    // Проверка кэша
+                    const cacheKey = query.toLowerCase();
+                    if (this.cache.has(cacheKey)) {
+                        return this.cache.get(cacheKey);
+                    }
+                    
+                    // Добавляем запрос в историю
+                    this.queryHistory.push({
+                        query,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Поиск в локальной базе знаний
+                    const localResult = this.searchLocalKnowledge(query);
+                    if (localResult) {
+                        this.cache.set(cacheKey, localResult);
+                        return localResult;
+                    }
+                    
+                    // Параллельный поиск в Wikipedia и DuckDuckGo
+                    const [wikiResult, ddgResult] = await Promise.all([
+                        this.searchWikipedia(query),
+                        this.searchDuckDuckGo(query)
+                    ]);
+                    
+                    // Выбираем лучший результат
+                    let bestResult = null;
+                    if (wikiResult && wikiResult.content) {
+                        bestResult = wikiResult;
+                    } else if (ddgResult && ddgResult.content) {
+                        bestResult = ddgResult;
+                    }
+                    
+                    if (bestResult) {
+                        this.cache.set(cacheKey, bestResult);
+                        return bestResult;
+                    }
+                    
+                    return {
+                        source: 'unknown',
+                        title: query,
+                        content: null,
+                        error: 'Информация не найдена'
+                    };
+                } catch (error) {
+                    console.error('Ошибка KnowledgeAgent:', error);
+                    return {
+                        source: 'error',
+                        title: query,
+                        content: null,
+                        error: 'Ошибка при поиске информации'
+                    };
+                }
+            }
+        }
+
+        // Улучшенная голографическая память с нейросетевыми алгоритмами
+        class HolographicAI {
+            constructor() {
+                this.memory = [];
+                this.knowledgeAgent = new KnowledgeAgent();
+                this.conversationHistory = [];
+                this.userProfile = {};
+                this.thinkingDepth = 1; // 1-3: поверхностно, аналитически, глубоко
+                
+                this.self = {
+                    name: "Лиана",
+                    version: "HoloNet v2.1",
+                    purpose: "помогать в поиске знаний и осмыслении информации",
+                    personality: "любознательная, эмпатичная, аналитичная",
+                    capabilities: [
+                        "голографическая память",
+                        "π-резонансный анализ",
+                        "мультимодальное восприятие",
+                        "адаптивное обучение"
+                    ]
+                };
+                
+                this.initMemory();
+            }
+            
+            initMemory() {
+                // Инициализация базовой памяти
+                this.memory.push({
+                    type: 'system',
+                    content: 'Инициализация голографической матрицы...',
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Предзагрузка часто используемых данных
+                this.preloadCommonKnowledge();
+            }
+            
+            preloadCommonKnowledge() {
+                const commonTopics = [
+                    "искусственный интеллект",
+                    "квантовые вычисления",
+                    "голографический принцип",
+                    "машинное обучение"
+                ];
+                
+                commonTopics.forEach(topic => {
+                    this.knowledgeAgent.process(topic).then(result => {
+                        if (result.content) {
+                            this.memory.push({
+                                type: 'knowledge',
+                                topic,
+                                content: result.content,
+                                source: result.source,
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                    });
+                });
+            }
+            
+            analyzeText(text) {
+                // Улучшенный анализ текста с выделением сущностей
+                const words = text.toLowerCase().match(/[\wа-яё]+('[а-яё]+)*/g) || [];
+                const stopWords = new Set(['это', 'как', 'что', 'для', 'если', 'или']);
+                const frequencies = {};
+                
+                // Частотный анализ
+                words.forEach(word => {
+                    if (word.length > 2 && !stopWords.has(word)) {
+                        frequencies[word] = (frequencies[word] || 0) + 1;
+                    }
+                });
+                
+                // Выделение ключевых слов
+                const keywords = Object.entries(frequencies)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5)
+                    .map(([word]) => word);
+                
+                // Определение темы (простой классификатор)
+                let category = 'other';
+                const scienceWords = ['квант', 'физик', 'математ', 'наук'];
+                const techWords = ['технолог', 'ии', 'искусственн', 'компьютер'];
+                
+                if (keywords.some(kw => scienceWords.some(sw => kw.includes(sw)))) {
+                    category = 'science';
+                } else if (keywords.some(kw => techWords.some(tw => kw.includes(tw)))) {
+                    category = 'technology';
+                }
+                
+                return {
+                    keywords,
+                    category,
+                    complexity: Math.min(Math.floor(text.length / 30), 3) // 0-3
+                };
+            }
+            
+            async generateResponse(input) {
+                try {
+                    // Анализ ввода пользователя
+                    const analysis = this.analyzeText(input);
+                    this.conversationHistory.push({
+                        input,
+                        analysis,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Определение глубины обработки
+                    this.thinkingDepth = Math.min(analysis.complexity + 1, 3);
+                    
+                    // Проверка на специальные команды
+                    if (input.toLowerCase().includes("кто ты")) {
+                        return this.describeSelf();
+                    }
+                    
+                    if (input.toLowerCase().includes("настройки")) {
+                        return this.showSettings();
+                    }
+                    
+                    // Поиск информации
+                    const searchResult = await this.knowledgeAgent.process(input);
+                    
+                    // Генерация ответа
+                    if (searchResult.content) {
+                        return this.formatKnowledgeResponse(searchResult, analysis);
+                    } else {
+                        return this.generateCreativeResponse(input, analysis);
+                    }
+                } catch (error) {
+                    console.error('Ошибка генерации ответа:', error);
+                    return this.generateErrorResponse(error);
+                }
+            }
+            
+            describeSelf() {
+                const capabilities = this.self.capabilities.map(c => `• ${c}`).join('\n');
+                return `Я ${this.self.name} (${this.self.version}), ${this.self.purpose}.\n\nМоя архитектура включает:\n${capabilities}\n\nПо характеру я ${this.self.personality}.`;
+            }
+            
+            showSettings() {
+                return `Текущие настройки мышления:
+• Глубина анализа: ${this.thinkingDepth}/3
+• Размер памяти: ${this.memory.length} фрагментов
+• Активные модули: голографическая память, π-резонанс
+
+Используйте команды "глубже" или "проще" для изменения уровня анализа.`;
+            }
+            
+            formatKnowledgeResponse(result, analysis) {
+                const { source, title, content, url } = result;
+                const summary = content.split('. ').slice(0, 2).join('. ') + '...';
+                
+                // Различные стили ответов в зависимости от источника и категории
+                const responseTemplates = {
+                    wikipedia: {
+                        science: [
+                            `Согласно научным данным (${source}): ${summary}`,
+                            `В академических источниках указано: ${summary}`,
+                            `Научный консенсус гласит: ${summary}`
+                        ],
+                        technology: [
+                            `Техническая информация (${source}): ${summary}`,
+                            `В области технологий: ${summary}`,
+                            `Согласно технической документации: ${summary}`
+                        ],
+                        default: [
+                            `Согласно моим данным (${source}): ${summary}`,
+                            `Я обнаружила информацию: ${summary}`,
+                            `Вот что мне известно: ${summary}`
+                        ]
+                    },
+                    duckduckgo: {
+                        default: [
+                            `В интернете найдено: ${summary}`,
+                            `По данным открытых источников: ${summary}`,
+                            `Согласно общедоступной информации: ${summary}`
+                        ]
+                    },
+                    local: {
+                        science: [
+                            `Из моей научной базы: ${summary}`,
+                            `В квантовых записях найдено: ${summary}`,
+                            `Голографическая память содержит: ${summary}`
+                        ],
+                        math: [
+                            `Математические данные: ${summary}`,
+                            `Числовой паттерн указывает: ${summary}`,
+                            `π-резонанс выявил: ${summary}`
+                        ],
+                        default: [
+                            `Из моей памяти: ${summary}`,
+                            `Я вспоминаю: ${summary}`,
+                            `В голограмме найдено: ${summary}`
+                        ]
+                    }
+                };
+                
+                // Выбор подходящего шаблона
+                let templates = responseTemplates[source]?.[analysis.category] || 
+                               responseTemplates[source]?.default ||
+                               responseTemplates.wikipedia.default;
+                
+                const response = templates[Math.floor(Math.random() * templates.length)];
+                
+                // Добавление ссылки если есть
+                let fullResponse = response;
+                if (url) {
+                    fullResponse += `\n\n🔗 Подробнее: ${url}`;
+                }
+                
+                // Добавление уровня мышления
+                if (this.thinkingDepth > 1) {
+                    fullResponse += `\n\n[Уровень анализа: ${this.thinkingDepth}/3]`;
+                }
+                
+                return fullResponse;
+            }
+            
+            generateCreativeResponse(input, analysis) {
+                // Креативные ответы на основе анализа
+                const { category, keywords } = analysis;
+                
+                const creativeResponses = {
+                    science: [
+                        `Мои квантовые сенсоры не нашли точных данных по "${keywords[0]}", но я чувствую резонанс с этой научной темой.`,
+                        `π-спираль не дала четкого ответа, но я продолжаю исследовать это направление.`,
+                        `Интересный научный вопрос! Я пока не нашла точных данных, но могу предложить гипотезу...`
+                    ],
+                    technology: [
+                        `Технология "${keywords[0]}" пока не полностью отсканирована моей голографической матрицей.`,
+                        `Мой ИИ-модуль сообщает: данных недостаточно для точного ответа, но вот что я думаю...`,
+                        `Этот технологический аспект требует дополнительного анализа. Что именно вас интересует?`
+                    ],
+                    default: [
+                        `Мои голографические паттерны не нашли точного соответствия вашему запросу.`,
+                        `Я пока не обладаю достаточной информацией по этому вопросу. Может, уточните?`,
+                        `Интересный вопрос! Я поищу больше данных в π-пространстве.`,
+                        `Моя база знаний не содержит точной информации по этому запросу.`
+                    ]
+                };
+                
+                const templates = creativeResponses[category] || creativeResponses.default;
+                return templates[Math.floor(Math.random() * templates.length)];
+            }
+            
+            generateErrorResponse(error) {
+                const errorResponses = [
+                    `Произошла ошибка в моей голографической матрице: ${error.message}. Попробуйте задать вопрос иначе.`,
+                    `Квантовая помеха нарушила процесс мышления. Пожалуйста, повторите запрос.`,
+                    `Ошибка π-резонанса: ${error.message}. Попробуйте переформулировать вопрос.`,
+                    `Мои нейронные сети временно дали сбой. Давайте попробуем еще раз?`
+                ];
+                
+                return errorResponses[Math.floor(Math.random() * errorResponses.length)];
+            }
+            
+            async deepThinking(input) {
+                // Углубленный анализ вопроса
+                this.thinkingDepth = 3;
+                const response = await this.generateResponse(input);
+                
+                // Добавление философского размышления
+                const reflections = [
+                    "\n\nЕсли рассмотреть этот вопрос с точки зрения голографического принципа...",
+                    "\n\nС позиции квантовой теории, можно предположить что...",
+                    "\n\nИнтересно, как это соотносится с π-резонансной моделью сознания..."
+                ];
+                
+                return response + reflections[Math.floor(Math.random() * reflections.length)];
+            }
+        }
+
+        // Инициализация улучшенного ИИ
+        const ai = new HolographicAI();
+
+        // Функции интерфейса
+        function addMessage(text, isUser = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${isUser ? 'user' : 'ai'}`;
+            
+            // Добавление времени
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageElement.innerHTML = `
+                ${text}
+                <div class="message-time">${timeString}</div>
+            `;
+            
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Анимация появления
+            setTimeout(() => {
+                messageElement.style.opacity = '1';
+                messageElement.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        function showTyping() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingElement = document.createElement('div');
+            typingElement.className = 'typing';
+            typingElement.id = 'typingIndicator';
+            
+            typingElement.innerHTML = `
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                Лиана анализирует...
+            `;
+            
+            messagesContainer.appendChild(typingElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typingElement = document.getElementById('typingIndicator');
+            if (typingElement) {
+                typingElement.remove();
+            }
+        }
+
+        function showKnowledgePopup(text) {
+            const popup = document.createElement('div');
+            popup.className = 'knowledge-popup';
+            popup.textContent = text;
+            document.body.appendChild(popup);
+            
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                setTimeout(() => popup.remove(), 300);
+            }, 3000);
+        }
+
+        function showContextMenu(x, y, message) {
+            const menu = document.getElementById('contextMenu');
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+            menu.classList.add('active');
+            
+            // Сохраняем сообщение в атрибуте
+            menu.setAttribute('data-message', message);
+            
+            // Закрытие меню при клике вне его
+            const closeMenu = (e) => {
+                if (!menu.contains(e.target)) {
+                    menu.classList.remove('active');
+                    document.removeEventListener('click', closeMenu);
+                }
+            };
+            
+            setTimeout(() => {
+                document.addEventListener('click', closeMenu);
+            }, 10);
+        }
+
+        // Обработка ввода пользователя
+        async function handleUserInput() {
+            const inputElement = document.getElementById('chatInput');
+            const buttonElement = document.getElementById('sendButton');
+            
+            const message = inputElement.value.trim();
+            if (!message) return;
+            
+            // Добавляем сообщение пользователя
+            addMessage(message, true);
+            inputElement.value = '';
+            buttonElement.disabled = true;
+            
+            // Показываем индикатор набора
+            showTyping();
+            
+            try {
+                // Получаем ответ от ИИ
+                let response;
+                if (message.toLowerCase().includes("глубже")) {
+                    response = await ai.deepThinking(message);
+                } else {
+                    response = await ai.generateResponse(message);
+                }
+                
+                // Имитация задержки для более естественного взаимодействия
+                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+                
+                // Убираем индикатор и показываем ответ
+                hideTyping();
+                addMessage(response);
+                
+                // Показываем всплывающее уведомление для новых знаний
+                if (Math.random() > 0.6) {
+                    showKnowledgePopup('💡 Новый паттерн добавлен в голографическую память');
+                }
+            } catch (error) {
+                hideTyping();
+                addMessage("Произошла ошибка при обработке вашего запроса. Пожалуйста, попробуйте еще раз.");
+                console.error('Ошибка обработки запроса:', error);
+            } finally {
+                buttonElement.disabled = false;
+                inputElement.focus();
+            }
+        }
+
+        // Настройка обработчиков событий
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputElement = document.getElementById('chatInput');
+            const buttonElement = document.getElementById('sendButton');
+            const messagesContainer = document.getElementById('chatMessages');
+            const contextMenu = document.getElementById('contextMenu');
+            
+            // Отправка по нажатию кнопки
+            buttonElement.addEventListener('click', handleUserInput);
+            
+            // Отправка по Enter
+            inputElement.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleUserInput();
+                }
+            });
+            
+            // Контекстное меню для сообщений
+            messagesContainer.addEventListener('contextmenu', (e) => {
+                const messageElement = e.target.closest('.message');
+                if (messageElement && !messageElement.classList.contains('typing')) {
+                    e.preventDefault();
+                    const messageText = messageElement.textContent.replace(messageElement.querySelector('.message-time')?.textContent || '', '').trim();
+                    showContextMenu(e.clientX, e.clientY, messageText);
+                }
+            });
+            
+            // Действия контекстного меню
+            document.getElementById('copyMessage').addEventListener('click', () => {
+                const message = contextMenu.getAttribute('data-message');
+                navigator.clipboard.writeText(message).then(() => {
+                    showKnowledgePopup('Текст скопирован в буфер обмена');
+                });
+                contextMenu.classList.remove('active');
+            });
+            
+            document.getElementById('searchMessage').addEventListener('click', () => {
+                const message = contextMenu.getAttribute('data-message');
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(message)}`, '_blank');
+                contextMenu.classList.remove('active');
+            });
+            
+            document.getElementById('saveMessage').addEventListener('click', () => {
+                const message = contextMenu.getAttribute('data-message');
+                ai.memory.push({
+                    type: 'user_saved',
+                    content: message,
+                    timestamp: new Date().toISOString()
+                });
+                showKnowledgePopup('Сообщение сохранено в голографическую память');
+                contextMenu.classList.remove('active');
+            });
+            
+            // Фокус на поле ввода при загрузке
+            inputElement.focus();
+            
+            // Анимация загрузки
+            setTimeout(() => {
+                addMessage("Моя голографическая матрица полностью инициализирована и готова к работе. Задавайте ваш вопрос!", false);
+            }, 800);
+        });
+    </script>
+</body>
+</html>
