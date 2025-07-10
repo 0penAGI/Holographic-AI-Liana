@@ -16,9 +16,7 @@ Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deli
 - **SVG Integration**: Generates dynamic visualizations using the W3C SVG namespace (see [W3C SVG Specification](https://www.w3.org/TR/SVG/)).
 - **Extensible Architecture**: Supports future integration with GitHub agents for automated repository management.
 
-## Demo
 
-Try Liana live at [your-deployment-url] (update with your hosted URL).
 
 ## Installation
 
