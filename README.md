@@ -4,7 +4,7 @@
 **Liana: Next-Generation Holographic AI Interface**
 
 ![Liana Logo](https://github.com/user-attachments/assets/3ff22b3e-d71c-494a-90b8-b6fcefa5fd94)
-![Uploading image.jpeg…]()
+
 
 Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deliver intelligent conversations, perform in-depth concept analysis, and adapt to user communication styles. Powered by π-resonance networks and holographic memory, Liana integrates advanced text analysis with a sleek, mobile-friendly UI. It also supports dynamic SVG-based visualizations using the W3C SVG namespace (`http://www.w3.org/2000/svg`).
 
@@ -54,7 +54,7 @@ Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deli
 
 ### Technical Details
 
-- **SVG Namespace**: Utilizes the W3C SVG namespace (http://www.w3.org/2000/svg) for dynamic visualization generation, as defined in the SVG 1.0 Specification and extended in SVG 1.1, 1.2, and 2 (see W3C SVG Overview).
+- **SVG Namespace**: True W3C- namespace: (see W3C SVG Overview).
 - **Knowledge Agent**: Combines local knowledge base with external API calls to Wikipedia and DuckDuckGo, caching results for efficiency.
 - **Holographic Memory**: Stores conversation history and preloaded knowledge (e.g., quantum physics, mathematics) for context retention.
 - **π-Resonance Analysis**: Employs a multi-level text analysis algorithm to categorize input and adjust response complexity.
