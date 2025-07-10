@@ -59,3 +59,10 @@ Try Liana live at [your-deployment-url] (update with your hosted URL).
 - **Knowledge Agent**: Combines local knowledge base with external API calls to Wikipedia and DuckDuckGo, caching results for efficiency.
 - **Holographic Memory**: Stores conversation history and preloaded knowledge (e.g., quantum physics, mathematics) for context retention.
 - **π-Resonance Analysis**: Employs a multi-level text analysis algorithm to categorize input and adjust response complexity.
+
+
+#### License
+This project is licensed under the MIT License. See the LICENSE file for details.
+#### About
+Developed by 0penAGI. For more information, contact us via GitHub Issues.
+© 2025 0penAGI. Built with ❤️ for the future of AI.
