@@ -11,8 +11,7 @@ Liana is a next-generation holographic AI interface (HoloNet v2.1) designed to f
 - **Knowledge Agent**: Searches and caches information from Wikipedia, DuckDuckGo, and a local knowledge base.
 - **Holographic Memory**: Stores conversation history and user interactions for context-aware responses.
 - **π-Resonance Analysis**: Categorizes and processes user input with adaptive depth (1-3 levels).
-- **SVG Integration**: Generates visualizations using the W3C SVG namespace (`http://www.w3.org/2000/svg`).
-- **Extensible**: Supports integration with GitHub agents for automated repository management (see [Future Plans](#future-plans)).
+
 
 ## Demo
 Try Liana live at [your-deployment-url] (update with your hosted URL).
