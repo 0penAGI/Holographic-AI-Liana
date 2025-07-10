@@ -35,14 +35,16 @@
 
         .chat-header {
             padding: 16px;
-            background: rgba(255, 255, 255, 0.314); /* Увеличьте прозрачность */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             color: white;
             font-weight: 314;
             display: flex;
+            z-index: 2000;
             justify-content: space-between;
             align-items: center;
             position: relative;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Тонкая граница */
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Легкая тень */
         }
 
@@ -74,7 +76,7 @@
         .message-bg {
           position: absolute;
           inset: 0;
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.1);
           filter: url(#displacementFilter);
           z-index: 1;
         }
@@ -114,23 +116,25 @@
 
         
         .chat-input-container {
-            padding: 11px 15px;
-            background: rgba(255, 255, 255, 0.1); 
+            padding: 13px 15px;
+            max-width: 100%;
+            z-index: 2000;
             display: flex;
-            gap: 8px;
-            position: relative;
-            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.1); /* Легкая тень вверх */
+            gap: 16px;
+            animation: slideUp 0.3s ease-out;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            
         }
         .chat-input {
             flex: 1;
-            padding: 11px 11px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 18px;
+            padding: 8px 8px;
+            border-radius: 21px;
             font-size: 11px;
+            z-index: 1200;
             outline: none;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.2);
-            color: #f6f6f7;
+            
         }
 
         .chat-input::placeholder {
@@ -213,10 +217,10 @@
 
         .knowledge-popup {
             position: fixed;
-            bottom: 20px;
+            bottom: 200px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             color: black;
@@ -224,9 +228,9 @@
             border-radius: 21px;
             font-size: 11px;
             max-width: 80%;
-            z-index: 1000;
+            z-index: 2000;
             display: flex;
-            align-items: center;
+            align-items: left;
             gap: 8px;
             animation: slideUp 0.3s ease-out;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -356,7 +360,7 @@
 
         @media (prefers-color-scheme: dark) {
             .chat-header {
-                background: linear-gradient(45deg, #121212, #222222);
+                background: rgba(0, 0, 0, 0.2);
                 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
                 color: #1e1a1c;
             }
@@ -982,7 +986,7 @@
         // Эффект печати только для сообщений ИИ
         if (!isUser) {
             let index = 0;
-            const speed = 10; // Скорость печати (миллисекунды на символ)
+            const speed = 11; // Speed Typing(миллисекунды на символ)
             
             function typeWriter() {
                 if (index < text.length) {
@@ -1011,7 +1015,7 @@
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                 </div>
-                Лиана анализирует...
+                thinking…
             `;
             
             messagesContainer.appendChild(typingElement);
