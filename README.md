@@ -29,4 +29,5 @@ Try Liana live at [your-deployment-url] (update with your hosted URL).
    ```bash
    git clone https://github.com/YOUR_USERNAME/liana-holographic-ai.git
    cd liana-holographic-ai
-Run: index.html
+2.  Open index.html in a modern web browser (e.g., Chrome, Firefox).
+3.  No server is required since the file uses client-side JavaScript, but a local server (e.g., python -m http.server) can be used for testing.
