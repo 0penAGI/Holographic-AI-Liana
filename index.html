@@ -930,30 +930,52 @@
         // Инициализация улучшенного ИИ
         const ai = new HolographicAI();
 
-        // Функции интерфейса
         function addMessage(text, isUser = false) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageElement = document.createElement('div');
             messageElement.className = `message ${isUser ? 'user' : 'ai'}`;
-            
+    
             // Добавление времени
             const now = new Date();
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            messageElement.innerHTML = `
-                ${text}
-                <div class="message-time">${timeString}</div>
-            `;
-            
+    
+            // Создаем контейнер для текста сообщения
+            const textContainer = document.createElement('span');
+            messageElement.appendChild(textContainer);
+    
+            // Создаем элемент для времени
+            const timeElement = document.createElement('div');
+            timeElement.className = 'message-time';
+            timeElement.textContent = timeString;
+            messageElement.appendChild(timeElement);
+    
             messagesContainer.appendChild(messageElement);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Анимация появления
+    setTimeout(() => {
+        messageElement.style.opacity = '1';
+        messageElement.style.transform = 'translateY(0)';
+        
+        // Эффект печати только для сообщений ИИ
+        if (!isUser) {
+            let index = 0;
+            const speed = 10; // Скорость печати (миллисекунды на символ)
             
-            // Анимация появления
-            setTimeout(() => {
-                messageElement.style.opacity = '1';
-                messageElement.style.transform = 'translateY(0)';
-            }, 10);
+            function typeWriter() {
+                if (index < text.length) {
+                    textContainer.textContent += text.charAt(index);
+                    index++;
+                    setTimeout(typeWriter, speed);
+                }
+            }
+            
+            typeWriter();
+        } else {
+            textContainer.textContent = text;
         }
+    }, 10);
+}
 
         function showTyping() {
             const messagesContainer = document.getElementById('chatMessages');
