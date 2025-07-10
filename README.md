@@ -1,8 +1,8 @@
-
 # Holographic-AI-Liana
 
 **Liana: Next-Generation Holographic AI Interface**
-<img width="480" height="480" alt="image" src="https://github.com/user-attachments/assets/3ff22b3e-d71c-494a-90b8-b6fcefa5fd94" />
+
+![Liana Logo](https://github.com/user-attachments/assets/3ff22b3e-d71c-494a-90b8-b6fcefa5fd94)
 
 Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deliver intelligent conversations, perform in-depth concept analysis, and adapt to user communication styles. Powered by π-resonance networks and holographic memory, Liana integrates advanced text analysis with a sleek, mobile-friendly UI. It also supports dynamic SVG-based visualizations using the W3C SVG namespace (`http://www.w3.org/2000/svg`).
 
@@ -33,14 +33,10 @@ Try Liana live at [your-deployment-url] (update with your hosted URL).
    ```bash
    git clone https://github.com/0penAGI/Holographic-AI-Liana.git
    cd Holographic-AI-Liana
-	2. Install Dependencies:
- ```bash
-    npm install
-		
-	4.Run the Application: Open index.html in a modern web browser, or start a local server:
- ```bash
-  npm start
-	
+	2	Install Dependencies: npm install
+	3	
+	4	Run the Application: Open index.html in a modern web browser, or start a local server: npm start
+	5	
 Usage
 	•	Chat Interface: Enter your query in the input field and press Enter or click the send button. Liana responds with context-aware answers, leveraging its knowledge agent and holographic memory.
 	•	Context Menu: Right-click on messages to copy, search online, or save to memory.
@@ -69,15 +65,4 @@ License
 This project is licensed under the MIT License. See the LICENSE file for details.
 About
 Developed by 0penAGI. For more information, contact us via GitHub Issues.
-
 © 2025 0penAGI. Built with ❤️ for the future of AI.
-### Key Updates and Notes:
-1. **Improved Structure**: Organized sections for clarity (Features, Installation, Usage, etc.).
-2. **Incorporated SVG Details**: Referenced the W3C SVG namespace and linked to the official specification, as per the provided document.
-3. **Reflected Code Features**: Highlighted the chat interface, context menu, and special commands from the provided HTML/JavaScript code.
-4. **Future Plans**: Added a section for extensibility, mentioning GitHub agent integration as noted in the original README.
-5. **Professional Tone**: Maintained a balance between technical accuracy and accessibility.
-6. **Placeholder for Demo URL**: Included a placeholder for the live demo URL, as the original README suggested updating it.
-7. **License and Attribution**: Included a license section (assumed MIT, as it’s common for open-source projects; update if a specific license is provided) and credited 0penAGI.
-
-If you need specific changes (e.g., a different license, additional features, or a specific logo path), please let me know! You can also confirm if you’d like me to generate any SVG visualizations or charts to complement the README.
