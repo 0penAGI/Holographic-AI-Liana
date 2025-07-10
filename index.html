@@ -397,10 +397,10 @@
         <div class="chat-header">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="status-indicator"></div>
-                <span>Голографический ИИ Лиана</span>
+                <span></span>
             </div>
             <div class="ai-features">
-                <span class="ai-feature-tag">π-резонанс</span>
+                <span class="ai-feature-tag">π-resonance</span>
                 <span class="ai-feature-tag">Holo v2.1</span>
             </div>
         </div>
@@ -411,7 +411,7 @@
             </div>
         </div>
         <div class="chat-input-container">
-            <input type="text" class="chat-input" id="chatInput" placeholder="Отправьте сообщение..." autocomplete="off">
+            <input type="text" class="chat-input" id="chatInput" placeholder="type here…" autocomplete="off">
             <button class="send-button" id="sendButton">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1101,7 +1101,7 @@
                     content: message,
                     timestamp: new Date().toISOString()
                 });
-                showKnowledgePopup('Сообщение сохранено в голографическую память');
+                showKnowledgePopup('message saved');
                 contextMenu.classList.remove('active');
             });
             
