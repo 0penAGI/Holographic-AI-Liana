@@ -37,30 +37,30 @@ Try Liana live at [your-deployment-url] (update with your hosted URL).
 	3	
 	4	Run the Application: Open index.html in a modern web browser, or start a local server: npm start
 	5	
-Usage
-	•	Chat Interface: Enter your query in the input field and press Enter or click the send button. Liana responds with context-aware answers, leveraging its knowledge agent and holographic memory.
-	•	Context Menu: Right-click on messages to copy, search online, or save to memory.
-	•	Special Commands:
-	◦	кто ты: Learn about Liana’s architecture and capabilities.
-	◦	настройки: View current thinking settings (e.g., analysis depth).
-	◦	глубже: Trigger deeper analysis for complex queries.
+### USAGE
+•	Chat Interface: Enter your query in the input field and press Enter or click the send button. Liana responds with context-aware answers, leveraging its knowledge agent and holographic memory.
+•	Context Menu: Right-click on messages to copy, search online, or save to memory.
+•	Special Commands:
+◦	кто ты: Learn about Liana’s architecture and capabilities.
+◦	настройки: View current thinking settings (e.g., analysis depth).
+◦	глубже: Trigger deeper analysis for complex queries.
 Technical Details
-	•	SVG Namespace: Utilizes the W3C SVG namespace (http://www.w3.org/2000/svg) for dynamic visualization generation, as defined in the SVG 1.0 Specification and extended in SVG 1.1, 1.2, and 2 (see W3C SVG Overview).
-	•	Knowledge Agent: Combines local knowledge base with external API calls to Wikipedia and DuckDuckGo, caching results for efficiency.
-	•	Holographic Memory: Stores conversation history and preloaded knowledge (e.g., quantum physics, mathematics) for context retention.
-	•	π-Resonance Analysis: Employs a multi-level text analysis algorithm to categorize input and adjust response complexity.
+•	SVG Namespace: Utilizes the W3C SVG namespace (http://www.w3.org/2000/svg) for dynamic visualization generation, as defined in the SVG 1.0 Specification and extended in SVG 1.1, 1.2, and 2 (see W3C SVG Overview).
+•	Knowledge Agent: Combines local knowledge base with external API calls to Wikipedia and DuckDuckGo, caching results for efficiency.
+•	Holographic Memory: Stores conversation history and preloaded knowledge (e.g., quantum physics, mathematics) for context retention.
+•	π-Resonance Analysis: Employs a multi-level text analysis algorithm to categorize input and adjust response complexity.
 Future Plans
-	•	Integration with GitHub agents for automated repository management.
-	•	Enhanced visualization capabilities with advanced SVG animations.
+•	Integration with GitHub agents for automated repository management.
+•	Enhanced visualization capabilities with advanced SVG animations.
 	•	Support for additional knowledge sources and multilingual queries.
-	•	Improved deep thinking mode with more sophisticated reasoning algorithms.
-Contributing
+•	Improved deep thinking mode with more sophisticated reasoning algorithms.
+### Contributing
 Contributions are welcome! Please follow these steps:
-	1	Fork the repository.
-	2	Create a new branch (git checkout -b feature/your-feature).
-	3	Commit your changes (git commit -m 'Add your feature').
-	4	Push to the branch (git push origin feature/your-feature).
-	5	Open a Pull Request.
+1	Fork the repository.
+2	Create a new branch (git checkout -b feature/your-feature).
+3	Commit your changes (git commit -m 'Add your feature').
+4	Push to the branch (git push origin feature/your-feature).
+5	Open a Pull Request.
 License
 This project is licensed under the MIT License. See the LICENSE file for details.
 About
