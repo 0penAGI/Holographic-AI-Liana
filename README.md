@@ -33,10 +33,14 @@ Try Liana live at [your-deployment-url] (update with your hosted URL).
    ```bash
    git clone https://github.com/0penAGI/Holographic-AI-Liana.git
    cd Holographic-AI-Liana
-	2	Install Dependencies: npm install
-	3	
-	4	Run the Application: Open index.html in a modern web browser, or start a local server: npm start
-	5	
+	2. Install Dependencies:
+ ```bash
+    npm install
+		
+	4.Run the Application: Open index.html in a modern web browser, or start a local server:
+ ```bash
+  npm start
+	
 Usage
 	•	Chat Interface: Enter your query in the input field and press Enter or click the send button. Liana responds with context-aware answers, leveraging its knowledge agent and holographic memory.
 	•	Context Menu: Right-click on messages to copy, search online, or save to memory.
