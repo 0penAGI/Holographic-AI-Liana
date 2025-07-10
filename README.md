@@ -34,3 +34,11 @@ Try Liana live at [your-deployment-url] (update with your hosted URL).
    ```bash
    git clone https://github.com/0penAGI/Holographic-AI-Liana.git
    cd Holographic-AI-Liana
+
+2. **Install**
+   ```bash
+   npm install
+   
+3. **Run the Application** Open index.html in a modern web browser, or start a local
+   ```bash
+   npm start
