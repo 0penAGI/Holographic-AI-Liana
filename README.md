@@ -35,10 +35,27 @@ Try Liana live at [your-deployment-url] (update with your hosted URL).
    git clone https://github.com/0penAGI/Holographic-AI-Liana.git
    cd Holographic-AI-Liana
 
-2. **Install**
+2. **Install**:
    ```bash
    npm install
    
-3. **Run the Application** Open index.html in a modern web browser, or start a local
+3. **Run the Application**:
+   Open index.html in a modern web browser, or start a local:
    ```bash
    npm start
+
+### Usage
+
+- **Chat Interface**: Enter your query in the input field and press Enter or click the send button. Liana responds with context-aware answers, leveraging its knowledge agent and holographic memory.
+- **Context Menu**: Right-click on messages to copy, search online, or save to memory.
+- **Special Commands**:
+- **кто ты**- Learn about Liana’s architecture and capabilities.
+- **настройки**- View current thinking settings (e.g., analysis depth).
+- **глубже**- Trigger deeper analysis for complex queries.
+
+### Technical Details
+
+- **SVG Namespace**: Utilizes the W3C SVG namespace (http://www.w3.org/2000/svg) for dynamic visualization generation, as defined in the SVG 1.0 Specification and extended in SVG 1.1, 1.2, and 2 (see W3C SVG Overview).
+- **Knowledge Agent**: Combines local knowledge base with external API calls to Wikipedia and DuckDuckGo, caching results for efficiency.
+- **Holographic Memory**: Stores conversation history and preloaded knowledge (e.g., quantum physics, mathematics) for context retention.
+- **π-Resonance Analysis**: Employs a multi-level text analysis algorithm to categorize input and adjust response complexity.
