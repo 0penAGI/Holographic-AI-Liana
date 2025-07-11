@@ -75,4 +75,4 @@ Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deli
 This project is licensed under the MIT License. See the LICENSE file for details.
 #### About
 Developed by 0penAGI. For more information, contact us via GitHub Issues.
-© 2025 0penAGI. Built with ❤️ for the future of AI.
+© 2025 0penAGI. ∴ Built with ∵ for the future of AI.
