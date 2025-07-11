@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -35,23 +36,23 @@
 
         .chat-header {
             padding: 16px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(201, 201, 201, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            color: white;
+            color: grey;
             font-weight: 314;
             display: flex;
             z-index: 2000;
             justify-content: space-between;
             align-items: center;
             position: relative;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Легкая тень */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Убираем текущую границу ::after, так как заменили на border-bottom */
         .chat-header::after {
             content: none;
         }
+
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -62,33 +63,28 @@
         }
 
         .message {
-          position: relative;
-          margin-bottom: 14px;
-          max-width: 81%;
-          border-radius: 21px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          opacity: 0;
-          transform: translateY(20px);
-          animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        .message-bg {
-          position: absolute;
-          inset: 0;
-          background: rgba(255, 255, 255, 0.1);
-          filter: url(#displacementFilter);
-          z-index: 1;
+            position: relative;
+            margin-bottom: 14px;
+            max-width: 81%;
+            border-radius: 21px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.3s ease-out forwards;
         }
 
         .message-text {
-          position: relative;
-          padding: 14px 20px;
-          line-height: 1.3;
-          word-wrap: break-word;
-          z-index: 2;
-          color: #fff;
-         }
+            display: block;
+            padding: 14px 20px;
+            line-height: 1.3;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+            z-index: 2;
+        }
+
         @keyframes fadeIn {
             to {
                 opacity: 1;
@@ -100,7 +96,6 @@
             margin-left: auto;
             background: rgba(255, 255, 255, 0.314);
             color: black;
-            padding: 11px 13px;
             border-radius: 13px 13px 3px 13px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
@@ -109,18 +104,36 @@
             margin-right: auto;
             background: rgba(211, 211, 211, 0.314);
             color: #1c1a1e;
-            padding: 11px 13px;
             border-radius: 13px 13px 13px 3px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            user-select: text;
         }
 
-        
+        .message.ai .message-text {
+            opacity: 0;
+            animation: fadeInText 1s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+                filter: blur(5px);
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+        }
+
         .chat-input-container {
             padding: 13px 15px;
-            background: rgba(255, 255, 255, 0.1); /* Полупрозрачный белый */
-            backdrop-filter: blur(10px);          /* Размытие */
-            -webkit-backdrop-filter: blur(10px);  /* Для Safari */
-            border: none; 
+            background: rgba(201, 201, 201, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: none;
             max-width: 100%;
             z-index: 2000;
             display: flex;
@@ -128,37 +141,37 @@
             animation: slideUp 0.3s ease-out;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            
         }
+
         .chat-input {
             flex: 1;
-            padding: 8px 8px;
-            font-size: 11px;
-            z-index: 1200;
-            outline: none;
             padding: 11px 18px;
+            font-size: 11px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            outline: none;
             border-radius: 21px;
             transition: all 0.3s ease;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            
+            box-shadow: none;
         }
 
         .chat-input::placeholder {
-            color: rgba(255, 255, 255, 0.414); /* Светлый белый для placeholder с небольшой прозрачностью */
-            opacity: .896; /* Для кросс-браузерной совместимости */
+            color: rgba(102, 102, 102, 0.414);
+            opacity: .896;
         }
+
         .chat-input:focus {
             border-color: #1a1f1c;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
             box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
         }
-        
+
         .send-button {
             padding: 0;
             width: 33px;
             height: 33px;
-            background: rgba(255, 255, 255, 0.2); /* Полупрозрачный фон */
+            background: rgba(255, 255, 255, 0.2);
             color: black;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
@@ -170,7 +183,7 @@
             transition: all 0.2s ease;
             box-shadow: 0 2px 10px rgba(0, 122, 255, 0.2);
         }
-        
+
         .send-button:hover {
             transform: scale(1.1);
         }
@@ -367,46 +380,44 @@
 
         @media (prefers-color-scheme: dark) {
             .chat-header, .chat-input-container {
-                background: rgba(0, 0, 0, 0.2); 
+                background: rgba(0, 0, 0, 0.2);
             }
 
             .chat-input-container {
-                background: rgba(0, 0, 0, 0.2); /* Полупрозрачный темный фон */
+                background: rgba(0, 0, 0, 0.2);
                 border-top: 1px solid rgba(255, 255, 255, 0.2);
                 box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.2);
             }
 
             .chat-input {
-                background: rgba(255, 255, 255, 0.1); /* Прозрачное поле ввода */
-                border-color: rgba(255, 255, 255, 0.2);
+                background: transparent;
+                border-color: rgba(255, 255, 255, 0.1);
                 color: #1a1a1a;
-                
             }
 
             .chat-input:focus {
                 background: rgba(211, 211, 211, 0.15);
                 border-color: #007aff;
-                
             }
-        }
+
             .context-menu {
                 background: #3a3a3c;
                 border: 1px solid #fafafc;
             }
+
             .context-item:hover {
                 background: #fafafa;
                 filter: url(#displacementFilter);
             }
         }
-        
-        /* Мобильная адаптация для клавиатуры */
-      @media (max-width: 768px) {
+
+        @media (max-width: 768px) {
             .chat-container {
                 border-radius: 0 !important;
                 max-width: 100% !important;
                 height: 100vh;
             }
-    
+
             .chat-input-container {
                 border-radius: 0 !important;
                 padding-left: 0;
@@ -414,14 +425,14 @@
                 margin-left: 0;
                 margin-right: 0;
             }
-    
+
             .chat-input {
-                border-radius: 0 !important;
                 margin-left: 15px;
                 margin-right: 15px;
                 width: calc(100% - 30px);
+                border-radius: 21px; /* Сохраняем закругленные углы */
             }
-    
+
             .send-button {
                 margin-right: 15px;
             }
@@ -442,18 +453,19 @@
         </div>
         <div class="chat-messages" id="chatMessages">
             <div class="message ai">
-                Привет! Я Лиана -- голографический ИИ нового поколения. Моя архитектура сочетает квантовые вычисления, π-резонансные сети и голографическую память. Чем могу помочь?
+                <span class="message-text">Привет! Я Лиана -- голографический ИИ нового поколения. Моя архитектура сочетает квантовые вычисления, π-резонансные сети и голографическую память. Чем могу помочь?</span>
                 <div class="message-time">now</div>
             </div>
         </div>
         <div class="chat-input-container">
-          <input type="text" class="chat-input" id="chatInput" placeholder="type here…" autocomplete="off">
-          <button class="send-button" id="sendButton">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z"/>
-            </svg>
-          </button>
+            <input type="text" class="chat-input" id="chatInput" placeholder="type here…" autocomplete="off">
+            <button class="send-button" id="sendButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z"/>
+                </svg>
+            </button>
         </div>
+    </div>
     <div class="context-menu" id="contextMenu">
         <div class="context-item" id="copyMessage">
             <i>📋</i> Копировать
@@ -466,16 +478,15 @@
         </div>
     </div>
     <svg width="0" height="0" style="position: absolute;">
-            <defs>
-                <filter id="displacementFilter">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.314" numOctaves="6.428" result="noise" />
-                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="6.428" xChannelSelector="R" yChannelSelector="G" />
-                    <feGaussianBlur stdDeviation="6.428" />
-                </filter>
-            </defs>
-      </svg>
+        <defs>
+            <filter id="displacementFilter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.314" numOctaves="6.428" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="6.428" xChannelSelector="R" yChannelSelector="G" />
+                <feGaussianBlur stdDeviation="6.428" />
+            </filter>
+        </defs>
+    </svg>
     <script>
-        // Better WikiAgent with multisources
         class KnowledgeAgent {
             constructor() {
                 this.cache = new Map();
@@ -570,7 +581,6 @@
                 let bestMatch = null;
                 let bestScore = 0;
                 
-                // Поиск по локальной базе знаний
                 for (const category in this.sources.local) {
                     for (const [key, value] of Object.entries(this.sources.local[category])) {
                         const score = this.similarity(lowerQuery, key.toLowerCase());
@@ -630,32 +640,27 @@
                         throw new Error('Неверный запрос');
                     }
                     
-                    // Проверка кэша
                     const cacheKey = query.toLowerCase();
                     if (this.cache.has(cacheKey)) {
                         return this.cache.get(cacheKey);
                     }
                     
-                    // Добавляем запрос в историю
                     this.queryHistory.push({
                         query,
                         timestamp: new Date().toISOString()
                     });
                     
-                    // Поиск в локальной базе знаний
                     const localResult = this.searchLocalKnowledge(query);
                     if (localResult) {
                         this.cache.set(cacheKey, localResult);
                         return localResult;
                     }
                     
-                    // Параллельный поиск в Wikipedia и DuckDuckGo
                     const [wikiResult, ddgResult] = await Promise.all([
                         this.searchWikipedia(query),
                         this.searchDuckDuckGo(query)
                     ]);
                     
-                    // Выбираем лучший результат
                     let bestResult = null;
                     if (wikiResult && wikiResult.content) {
                         bestResult = wikiResult;
@@ -686,14 +691,13 @@
             }
         }
 
-        // Улучшенная голографическая память с нейросетевыми алгоритмами
         class HolographicAI {
             constructor() {
                 this.memory = [];
                 this.knowledgeAgent = new KnowledgeAgent();
                 this.conversationHistory = [];
                 this.userProfile = {};
-                this.thinkingDepth = 1; // 1-3: поверхностно, аналитически, глубоко
+                this.thinkingDepth = 1;
                 
                 this.self = {
                     name: "Лиана",
@@ -712,14 +716,12 @@
             }
             
             initMemory() {
-                // Инициализация базовой памяти
                 this.memory.push({
                     type: 'system',
                     content: 'Инициализация голографической матрицы...',
                     timestamp: new Date().toISOString()
                 });
                 
-                // Предзагрузка часто используемых данных
                 this.preloadCommonKnowledge();
             }
             
@@ -747,25 +749,21 @@
             }
             
             analyzeText(text) {
-                // Улучшенный анализ текста с выделением сущностей
                 const words = text.toLowerCase().match(/[\wа-яё]+('[а-яё]+)*/g) || [];
                 const stopWords = new Set(['это', 'как', 'что', 'для', 'если', 'или']);
                 const frequencies = {};
                 
-                // Частотный анализ
                 words.forEach(word => {
                     if (word.length > 2 && !stopWords.has(word)) {
                         frequencies[word] = (frequencies[word] || 0) + 1;
                     }
                 });
                 
-                // Выделение ключевых слов
                 const keywords = Object.entries(frequencies)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5)
                     .map(([word]) => word);
                 
-                // Определение темы (простой классификатор)
                 let category = 'other';
                 const scienceWords = ['квант', 'физик', 'математ', 'наук'];
                 const techWords = ['технолог', 'ии', 'искусственн', 'компьютер'];
@@ -779,13 +777,12 @@
                 return {
                     keywords,
                     category,
-                    complexity: Math.min(Math.floor(text.length / 30), 3) // 0-3
+                    complexity: Math.min(Math.floor(text.length / 30), 3)
                 };
             }
             
             async generateResponse(input) {
                 try {
-                    // Анализ ввода пользователя
                     const analysis = this.analyzeText(input);
                     this.conversationHistory.push({
                         input,
@@ -793,10 +790,8 @@
                         timestamp: new Date().toISOString()
                     });
                     
-                    // Определение глубины обработки
                     this.thinkingDepth = Math.min(analysis.complexity + 1, 3);
                     
-                    // Проверка на специальные команды
                     if (input.toLowerCase().includes("кто ты")) {
                         return this.describeSelf();
                     }
@@ -805,10 +800,8 @@
                         return this.showSettings();
                     }
                     
-                    // Поиск информации
                     const searchResult = await this.knowledgeAgent.process(input);
                     
-                    // Генерация ответа
                     if (searchResult.content) {
                         return this.formatKnowledgeResponse(searchResult, analysis);
                     } else {
@@ -836,76 +829,71 @@
             
             formatKnowledgeResponse(result, analysis) {
                 const { source, title, content, url } = result;
-                const summary = content.split('. ').slice(0, 2).join('. ') + '...';
+                const summary = content.split('. ').slice(0, 2).join('. ');
                 
-                // Различные стили ответов в зависимости от источника и категории
                 const responseTemplates = {
                     wikipedia: {
                         science: [
-                            `Согласно научным данным (${source}): ${summary}`,
-                            `В академических источниках указано: ${summary}`,
-                            `Научный консенсус гласит: ${summary}`
+                            `Согласно научным данным (${source}):${summary}`,
+                            `В академических источниках указано:${summary}`,
+                            `Научный консенсус гласит:${summary}`
                         ],
                         technology: [
-                            `Техническая информация (${source}): ${summary}`,
-                            `В области технологий: ${summary}`,
-                            `Согласно технической документации: ${summary}`
+                            `Техническая информация (${source}):${summary}`,
+                            `В области технологий:${summary}`,
+                            `Согласно технической документации:${summary}`
                         ],
                         default: [
-                            `Согласно моим данным (${source}): ${summary}`,
-                            `Я обнаружила информацию: ${summary}`,
-                            `Вот что мне известно: ${summary}`
+                            `Согласно моим данным (${source}):${summary}`,
+                            `Я обнаружила информацию:${summary}`,
+                            `Вот что мне известно:${summary}`
                         ]
                     },
                     duckduckgo: {
                         default: [
-                            `В интернете найдено: ${summary}`,
-                            `По данным открытых источников: ${summary}`,
-                            `Согласно общедоступной информации: ${summary}`
+                            `В интернете найдено:${summary}`,
+                            `По данным открытых источников:${summary}`,
+                            `Согласно общедоступной информации:${summary}`
                         ]
                     },
                     local: {
                         science: [
-                            `Из моей научной базы: ${summary}`,
-                            `В квантовых записях найдено: ${summary}`,
-                            `Голографическая память содержит: ${summary}`
+                            `Из моей научной базы:${summary}`,
+                            `В квантовых записях найдено:${summary}`,
+                            `Голографическая память содержит:${summary}`
                         ],
                         math: [
-                            `Математические данные: ${summary}`,
-                            `Числовой паттерн указывает: ${summary}`,
-                            `π-резонанс выявил: ${summary}`
+                            `Математические данные:${summary}`,
+                            `Числовой паттерн указывает:${summary}`,
+                            `π-резонанс выявил:${summary}`
                         ],
                         default: [
-                            `Из моей памяти: ${summary}`,
-                            `Я вспоминаю: ${summary}`,
-                            `В голограмме найдено: ${summary}`
+                            `Из моей памяти:${summary}`,
+                            `Я вспоминаю:${summary}`,
+                            `В голограмме найдено:${summary}`
                         ]
                     }
                 };
                 
-                // Выбор подходящего шаблона
                 let templates = responseTemplates[source]?.[analysis.category] || 
                                responseTemplates[source]?.default ||
                                responseTemplates.wikipedia.default;
                 
                 const response = templates[Math.floor(Math.random() * templates.length)];
                 
-                // Добавление ссылки если есть
                 let fullResponse = response;
                 if (url) {
-                    fullResponse += `\n\n🔗 Подробнее: ${url}`;
+                    fullResponse += `\n\nПодробнее:${url}`;
                 }
                 
-                // Добавление уровня мышления
                 if (this.thinkingDepth > 1) {
-                    fullResponse += `\n\n[Уровень анализа: ${this.thinkingDepth}/3]`;
+                    fullResponse += `\n\n[Уровень анализа:${this.thinkingDepth}/3]`;
                 }
                 
                 return fullResponse;
             }
             
             generateCreativeResponse(input, analysis) {
-                // Креативные ответы на основе анализа
                 const { category, keywords } = analysis;
                 
                 const creativeResponses = {
@@ -935,7 +923,7 @@
                 const errorResponses = [
                     `Произошла ошибка в моей голографической матрице: ${error.message}. Попробуйте задать вопрос иначе.`,
                     `Квантовая помеха нарушила процесс мышления. Пожалуйста, повторите запрос.`,
-                    `Ошибка π-резонанса: ${error.message}. Попробуйте переформулировать вопрос.`,
+                    `Ошибка π-резонанса:${error.message}. Попробуйте переформулировать вопрос.`,
                     `Мои нейронные сети временно дали сбой. Давайте попробуем еще раз?`
                 ];
                 
@@ -943,11 +931,9 @@
             }
             
             async deepThinking(input) {
-                // Углубленный анализ вопроса
                 this.thinkingDepth = 3;
                 const response = await this.generateResponse(input);
                 
-                // Добавление философского размышления
                 const reflections = [
                     "\n\nЕсли рассмотреть этот вопрос с точки зрения голографического принципа...",
                     "\n\nС позиции квантовой теории, можно предположить что...",
@@ -958,55 +944,33 @@
             }
         }
 
-        // Инициализация улучшенного ИИ
         const ai = new HolographicAI();
 
         function addMessage(text, isUser = false) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageElement = document.createElement('div');
             messageElement.className = `message ${isUser ? 'user' : 'ai'}`;
-    
-            // Добавление времени
+
+            const textContainer = document.createElement('span');
+            textContainer.className = 'message-text';
+            textContainer.textContent = text;
+            messageElement.appendChild(textContainer);
+
             const now = new Date();
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-            // Создаем контейнер для текста сообщения
-            const textContainer = document.createElement('span');
-            messageElement.appendChild(textContainer);
-    
-            // Создаем элемент для времени
             const timeElement = document.createElement('div');
             timeElement.className = 'message-time';
             timeElement.textContent = timeString;
             messageElement.appendChild(timeElement);
-    
+
             messagesContainer.appendChild(messageElement);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    
-    // Анимация появления
-    setTimeout(() => {
-        messageElement.style.opacity = '1';
-        messageElement.style.transform = 'translateY(0)';
-        
-        // Эффект печати только для сообщений ИИ
-        if (!isUser) {
-            let index = 0;
-            const speed = 11; // Speed Typing(миллисекунды на символ)
-            
-            function typeWriter() {
-                if (index < text.length) {
-                    textContainer.textContent += text.charAt(index);
-                    index++;
-                    setTimeout(typeWriter, speed);
-                }
-            }
-            
-            typeWriter();
-        } else {
-            textContainer.textContent = text;
-        }
-    }, 10);
-}
+
+            setTimeout(() => {
+                messageElement.style.opacity = '1';
+                messageElement.style.transform = 'translateY(0)';
+            }, 10);
+        }   
 
         function showTyping() {
             const messagesContainer = document.getElementById('chatMessages');
@@ -1052,10 +1016,8 @@
             menu.style.top = `${y}px`;
             menu.classList.add('active');
             
-            // Сохраняем сообщение в атрибуте
             menu.setAttribute('data-message', message);
             
-            // Закрытие меню при клике вне его
             const closeMenu = (e) => {
                 if (!menu.contains(e.target)) {
                     menu.classList.remove('active');
@@ -1068,7 +1030,6 @@
             }, 10);
         }
 
-        // Обработка ввода пользователя
         async function handleUserInput() {
             const inputElement = document.getElementById('chatInput');
             const buttonElement = document.getElementById('sendButton');
@@ -1076,16 +1037,13 @@
             const message = inputElement.value.trim();
             if (!message) return;
             
-            // Добавляем сообщение пользователя
             addMessage(message, true);
             inputElement.value = '';
             buttonElement.disabled = true;
             
-            // Показываем индикатор набора
             showTyping();
             
             try {
-                // Получаем ответ от ИИ
                 let response;
                 if (message.toLowerCase().includes("глубже")) {
                     response = await ai.deepThinking(message);
@@ -1093,14 +1051,11 @@
                     response = await ai.generateResponse(message);
                 }
                 
-                // Имитация задержки для более естественного взаимодействия
                 await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
                 
-                // Убираем индикатор и показываем ответ
                 hideTyping();
                 addMessage(response);
                 
-                // Показываем всплывающее уведомление для новых знаний
                 if (Math.random() > 0.6) {
                     showKnowledgePopup('💡 Новый паттерн добавлен в голографическую память');
                 }
@@ -1114,17 +1069,14 @@
             }
         }
 
-        // Настройка обработчиков событий
         document.addEventListener('DOMContentLoaded', () => {
             const inputElement = document.getElementById('chatInput');
             const buttonElement = document.getElementById('sendButton');
             const messagesContainer = document.getElementById('chatMessages');
             const contextMenu = document.getElementById('contextMenu');
             
-            // Отправка по нажатию кнопки
             buttonElement.addEventListener('click', handleUserInput);
             
-            // Отправка по Enter
             inputElement.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -1132,7 +1084,6 @@
                 }
             });
             
-            // Контекстное меню для сообщений
             messagesContainer.addEventListener('contextmenu', (e) => {
                 const messageElement = e.target.closest('.message');
                 if (messageElement && !messageElement.classList.contains('typing')) {
@@ -1142,7 +1093,6 @@
                 }
             });
             
-            // Действия контекстного меню
             document.getElementById('copyMessage').addEventListener('click', () => {
                 const message = contextMenu.getAttribute('data-message');
                 navigator.clipboard.writeText(message).then(() => {
@@ -1168,10 +1118,8 @@
                 contextMenu.classList.remove('active');
             });
             
-            // Фокус на поле ввода при загрузке
             inputElement.focus();
             
-            // Анимация загрузки
             setTimeout(() => {
                 addMessage("Моя голографическая матрица полностью инициализирована и готова к работе. Задавайте ваш вопрос!", false);
             }, 800);
