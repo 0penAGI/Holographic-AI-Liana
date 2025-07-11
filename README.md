@@ -51,22 +51,22 @@ Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deli
 - **Chat Interface**: Enter your query in the input field and press Enter or click the send button. Liana responds with context-aware answers, leveraging its knowledge agent and holographic memory.
 - **Context Menu**: Right-click on messages to copy, search online, or save to memory.
 - **Special Commands**:
-- **кто ты**- Learn about Liana’s architecture and capabilities.
-- **настройки**- View current thinking settings (e.g., analysis depth).
-- **объясни квантовую физику**- for a knowledge-based response.
-- **посоветуй книгу**- for recommendations.
-- **глубже**- Trigger deeper analysis for complex queries.
+- **кто ты** • Learn about Liana’s architecture and capabilities.
+- **настройки** • View current thinking settings (e.g., analysis depth).
+- **объясни квантовую физику** • for a knowledge-based response.
+- **посоветуй книгу** • for recommendations.
+- **глубже** • Trigger deeper analysis for complex queries.
 
 ### Technical Details
 
 •  **Frontend**:
-	•  HTML/CSS: Responsive design with a gradient background, animations, and a glassmorphism-inspired UI.
-	•  JavaScript: Handles dynamic message rendering, context menus, and AI logic.
-	•  SVG: Uses the SVG namespace for the send button icon (see W3C SVG Specification).
+- HTML/CSS: Responsive design with a gradient background, animations, and a glassmorphism-inspired UI.
+- JavaScript: Handles dynamic message rendering, context menus, and AI logic.
+- SVG: Uses the SVG namespace for the send button icon (see W3C SVG Specification).
 •  **Backend Logic**:
-	•  SemanticCore: Tokenizes input, detects intent, topics, and emotions, and builds a context graph.
-	•  NeoCore: Generates personalized responses based on user profiles and semantic analysis.
-	•  KnowledgeAgent: Fetches data from Wikipedia, DuckDuckGo, and a local knowledge base with caching and timeout handling.
+- SemanticCore: Tokenizes input, detects intent, topics, and emotions, and builds a context graph.
+- NeoCore: Generates personalized responses based on user profiles and semantic analysis.
+- KnowledgeAgent: Fetches data from Wikipedia, DuckDuckGo, and a local knowledge base with caching and timeout handling.
 
 #### License
 This project is licensed under the MIT License. See the LICENSE file for details.
