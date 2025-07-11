@@ -1,7 +1,8 @@
+# **HoloNet**
 
-# Holographic-AI-Liana
+HoloNet is a sophisticated, holographic AI-powered chat interface designed to provide an immersive and intelligent conversational experience. Built with modern web technologies, it combines a visually appealing UI with advanced natural language processing, context-aware responses, and knowledge retrieval capabilities. The project leverages SVG for scalable graphics, a custom semantic analysis engine, and external APIs for enriched responses.
 
-**Liana: Next-Generation Holographic AI Interface**
+**Liana**: Next-Generation Holographic AI Interface**
 
 ![Liana Logo](https://github.com/user-attachments/assets/3ff22b3e-d71c-494a-90b8-b6fcefa5fd94)
 
