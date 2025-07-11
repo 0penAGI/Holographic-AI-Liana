@@ -739,8 +739,8 @@
                 this.maxMemorySize = 10;
 
                 this.emotionMap = {
-                    positive: new Set(["рад", "нравится", "круто", "здорово"]),
-                    negative: new Set(["грустно", "больно", "страшно", "плохо"]),
+                    positive: new Set(["рад", "нравится", "круто", "здорово", "вау", "ахах"]),
+                    negative: new Set(["грустно", "больно", "страшно", "плохо", "бля", "сэд"]),
                     neutral: new Set()
                 };
             }
@@ -905,11 +905,18 @@
                 };
 
                 this.emotionResponses = {
-                    positive: "Класс, чувствую твою позитивную энергию!",
-                    negative: "Ох, кажется, что-то не так. Расскажи, что случилось?",
+                    positive: [
+                    "Класс, чувствую твою позитивную энергию!",
+                    "Вау, твой энтузиазм заразителен!",
+                    "Радуюсь вместе с тобой! Что дальше?"
+                    ],
+                    negative: [
+                    "Ох, кажется, что-то не так. Расскажи, что случилось?",
+                    "Понимаю, настроение не очень. Давай разберемся?",
+                    "Грустно? Я тут, чтобы поддержать!"
+                    ],
                     neutral: ""
                 };
-
                 this.responseCache = new Map(); // Кэш ответов: { intent_topic_keywords: response }
                 this.cacheSizeLimit = 50; // Ограничение размера кэша
                 this.queryHistory = []; // История запросов: [{ intent, topic, keywords, timestamp }]
@@ -1198,8 +1205,8 @@
                     };
                 }
             }
-
             async fetchRelatedWikipediaTopics(query) {
+                if (!query || typeof query !== 'string' || query.trim() === '') return [];  
                 try {
                     const response = await this.fetchWithTimeout(
                         `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json`,
