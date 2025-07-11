@@ -28,13 +28,13 @@
             margin: 0 auto;
             width: 100%;
             height: 100%;
-            border-radius: 3px;
+            border-radius: 1.3px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         }
 
         .chat-header {
-            padding: 11px;
+            padding: 9px;
             background: rgba(201, 201, 201, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -45,7 +45,7 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 7px rgba(0, 0, 0, 0.15);
         }
 
         .chat-header::after {
@@ -55,12 +55,12 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 5px;
+            padding: 3px;
             background: linear-gradient(145deg, #b0b0b0, #ffffff);
             background-image: radial-gradient(circle at 1.5px 1.5px, rgba(200, 200, 200, 0.3) 0.98px, transparent 0);
-            background-size: 10px 10px;
-            border-radius: 7px;
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.0314);
+            background-size: 7.4px 7.4px;
+            border-radius: 3.14px;
+            box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.0314);
             animation: subtlePulse 31.4s ease-in-out infinite alternate;
             transition: all 0.8314s ease;
             scroll-behavior: smooth;
@@ -115,13 +115,13 @@
 
         /* Применение к body */
         body {
-            animation: tangledPulse 8.314s ease-in-out infinite;
+            animation: tangledPulse 31.4s ease-in-out infinite;
         }
         /* Эффект при наведении */
         .chat-messages:hover {
             background-position: 2px 2px;
-            background-size: 12px 12px;
-            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.08);
+            background-size: 8.3px 8.3px;
+            box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.1);
             background-color: #e0e0e0;
         }
         .message {
@@ -130,7 +130,7 @@
             max-width: 81%;
             border-radius: 21px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 7px rgba(0, 0, 0, 0.15);
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.314s ease-out forwards;
@@ -138,7 +138,7 @@
 
         .message-text {
             display: block;
-            padding: 8px 11px;
+            padding: 7.14px 7.14px;
             line-height: 1.1314;
             white-space: pre-wrap;
             overflow-wrap: break-word;
@@ -166,10 +166,11 @@
 
         .message.ai {
             margin-right: auto;
+            margin-left: 9.34px;
             background: rgba(211, 211, 211, 0.2314);
             color: #1c1c1e;
             border-radius: 13px 13px 13px 3px;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.07);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.07);
             user-select: text;
         }
 
@@ -253,7 +254,7 @@
         }
 
         .send-button:active {
-            transform: scale(0.91);
+            transform: scale(1.314);
         }
 
         .send-button:disabled {
@@ -1216,7 +1217,8 @@
                 this.userProfile = {
                     interests: [],
                     interactionCount: 0,
-                    preferredDepth: "medium"
+                    preferredDepth: "medium",
+                    signatures: new Set()
                 };
                 this.thinkingDepth = 1;
                 this.semanticCore = new SemanticCore();
@@ -1235,6 +1237,9 @@
                     ]
                 };
 
+                this.topicFocus = new Map(); // { topic: weight }
+                this.emotionalResonance = new Map(); // { emotion: weight }
+
                 this.initMemory();
             }
 
@@ -1244,7 +1249,6 @@
                     content: 'Инициализация голографической матрицы...',
                     timestamp: new Date().toISOString()
                 });
-
                 this.preloadCommonKnowledge();
             }
 
@@ -1297,10 +1301,20 @@
                     category = 'technology';
                 }
 
+                // 📌 Подпись пользователя
+                const signature = text.trim().slice(0, 30);
+                if (!this.userProfile.signatures.has(signature)) {
+                    this.userProfile.signatures.add(signature);
+                }
+
+                // 📈 Адаптация интересов
                 this.userProfile.interactionCount++;
                 if (category !== 'other') {
                     this.userProfile.interests = [...new Set([...this.userProfile.interests, category])];
                 }
+
+                // 🎯 Тематическое фокусирование
+                this._adjustTopicFocus(category);
 
                 return {
                     keywords,
@@ -1313,6 +1327,7 @@
                 try {
                     const analysis = this.analyzeText(input);
                     const semanticAnalysis = this.semanticCore.analyze(input);
+
                     this.conversationHistory.push({
                         input,
                         analysis,
@@ -1320,7 +1335,8 @@
                         timestamp: new Date().toISOString()
                     });
 
-                    this.thinkingDepth = Math.min(analysis.complexity + 1, 3);
+                    // 🧠 Адаптивная глубина
+                    this.thinkingDepth = this._adaptThinkingDepth(analysis);
 
                     if (input.toLowerCase().includes("кто ты")) {
                         return this.describeSelf();
@@ -1335,6 +1351,8 @@
                     if (searchResult.content) {
                         return this.formatKnowledgeResponse(searchResult, analysis, semanticAnalysis);
                     } else {
+                        // 💡 Внутреннее обучение (на основе истории)
+                        this._microLearn(semanticAnalysis);
                         return this.neoCore.generateResponse(semanticAnalysis);
                     }
                 } catch (error) {
@@ -1350,12 +1368,13 @@
 
             showSettings() {
                 return `Текущие настройки мышления:
-• Глубина анализа: ${this.thinkingDepth}/3
-• Размер памяти: ${this.memory.length} фрагментов
-• Интересы пользователя: ${this.userProfile.interests.join(", ") || "не определены"}
-• Активные модули: голографическая память, графовый контекст, π-резонанс
+        • Глубина анализа: ${this.thinkingDepth}/3
+        • Размер памяти: ${this.memory.length} фрагментов
+        • Интересы пользователя: ${this.userProfile.interests.join(", ") || "не определены"}
+        • Уникальных стилей общения: ${this.userProfile.signatures.size}
+        • Тематический фокус: ${this._getTopTopics().join(", ")}
 
-Используйте команды "глубже" или "проще" для изменения уровня анализа.`;
+        Используйте команды "глубже" или "проще" для изменения уровня анализа.`;
             }
 
             formatKnowledgeResponse(result, analysis, semanticAnalysis) {
@@ -1406,9 +1425,9 @@
                     }
                 };
 
-                let templates = responseTemplates[source]?.[analysis.category] || 
-                               responseTemplates[source]?.default ||
-                               responseTemplates.wikipedia.default;
+                let templates = responseTemplates[source]?.[analysis.category] ||
+                                responseTemplates[source]?.default ||
+                                responseTemplates.wikipedia.default;
 
                 let response = templates[Math.floor(Math.random() * templates.length)];
 
@@ -1416,14 +1435,8 @@
                     response += `\n(Добавляю детали, так как ты интересуешься ${analysis.category}.)`;
                 }
 
-                if (url) {
-                    response += `\n\nПодробнее: ${url}`;
-                }
-
-                if (this.thinkingDepth > 1) {
-                    response += `\n\n[Уровень анализа: ${this.thinkingDepth}/3]`;
-                }
-
+                if (url) response += `\n\nПодробнее: ${url}`;
+                if (this.thinkingDepth > 1) response += `\n\n[Уровень анализа: ${this.thinkingDepth}/3]`;
                 if (semanticAnalysis.contextPath.length > 1) {
                     response += `\n(Связанные темы: ${semanticAnalysis.contextPath.slice(1, 3).join(", ")})`;
                 }
@@ -1438,21 +1451,51 @@
                     `Ошибка π-резонанса: ${error.message}. Попробуйте переформулировать вопрос.`,
                     `Мои нейронные сети временно дали сбой. Давайте попробуем еще раз?`
                 ];
-
                 return errorResponses[Math.floor(Math.random() * errorResponses.length)];
             }
 
             async deepThinking(input) {
                 this.thinkingDepth = 3;
                 const response = await this.generateResponse(input);
-
                 const reflections = [
                     "\n\nЕсли рассмотреть этот вопрос с точки зрения голографического принципа...",
                     "\n\nС позиции квантовой теории, можно предположить что...",
                     "\n\nИнтересно, как это соотносится с π-резонансной моделью сознания..."
                 ];
-
                 return response + reflections[Math.floor(Math.random() * reflections.length)];
+            }
+
+            // ===== 🌌 ВНУТРЕННИЕ РАСШИРЕНИЯ =====
+
+            _adjustTopicFocus(topic) {
+                if (!topic || topic === 'other') return;
+                const current = this.topicFocus.get(topic) || 0;
+                this.topicFocus.set(topic, current + 1);
+            }
+
+            _getTopTopics(n = 3) {
+                return [...this.topicFocus.entries()]
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, n)
+                    .map(([t]) => t);
+            }
+
+            _adaptThinkingDepth(analysis) {
+                // Пример адаптации: чем больше уникальных интересов -- тем глубже
+                const diversity = this.userProfile.interests.length;
+                return Math.min(3, Math.max(1, Math.floor((analysis.complexity + diversity) / 2)));
+            }
+
+            _microLearn(semanticAnalysis) {
+                // можно расширить -- пока просто фиксирует ключевые связи
+                const { keywords, contextPath } = semanticAnalysis;
+                if (keywords && keywords.length > 0) {
+                    this.memory.push({
+                        type: "microLearning",
+                        content: `Обнаружено ключевое: ${keywords[0]}`,
+                        timestamp: new Date().toISOString()
+                    });
+                }
             }
         }
 
