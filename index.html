@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Голографический ИИ Лиана</title>
+    <title>HoloNet</title>
     <style>
         * {
             margin: 0;
@@ -35,7 +34,7 @@
         }
 
         .chat-header {
-            padding: 16px;
+            padding: 11px;
             background: rgba(201, 201, 201, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -56,12 +55,75 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 8px;
-            background: white;
-            background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
-            background-size: 9px 9px;
+            padding: 5px;
+            background: linear-gradient(145deg, #b0b0b0, #ffffff);
+            background-image: radial-gradient(circle at 1.5px 1.5px, rgba(200, 200, 200, 0.3) 0.98px, transparent 0);
+            background-size: 10px 10px;
+            border-radius: 7px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.0314);
+            animation: subtlePulse 31.4s ease-in-out infinite alternate;
+            transition: all 0.8314s ease;
+            scroll-behavior: smooth;
         }
 
+        /* Запутанный пульсирующий фон */
+        @keyframes tangledPulse {
+            0% {
+                background-color: #ffffff;
+                background-image: radial-gradient(
+                    circle at 1.5px 1.5px,
+                    rgba(200, 200, 200, 0.1) 0.734px,
+                    transparent 0
+                );
+                background-size: 8px 8px;
+                background-position: 0 0;
+                filter: hue-rotate(0deg);
+            }
+            25% {
+                background-position: 1px 2px;
+                background-size: 9px 9px;
+                filter: hue-rotate(30deg);
+            }
+            50% {
+                background-color: #b0b0b0;
+                background-image: radial-gradient(
+                    circle at 2px 2px,
+                    rgba(188, 188, 188, 0.25) 0.72px,
+                    transparent 0
+                );
+                background-size: 11px 11px;
+                background-position: -1px -1px;
+                filter: hue-rotate(60deg);
+            }
+            75% {
+                background-position: 0.5px 1px;
+                background-size: 10px 10px;
+                filter: hue-rotate(20deg);
+            }
+            100% {
+                background-color: #ffffff;
+                background-image: radial-gradient(
+                    circle at 1.5px 1.5px,
+                    rgba(200, 200, 200, 0.3) 0.634px,
+                    transparent 0
+                );
+                background-size: 8px 8px;
+                background-position: 0 0;
+                filter: hue-rotate(0deg);
+            }
+        }
+
+        /* Применение к body */
+        body {
+            animation: tangledPulse 8.314s ease-in-out infinite;
+        }
+        /* Эффект при наведении */
+        .chat-messages:hover {
+            background-position: 2px 2px;
+            background-size: 12px 12px;
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.08);
+            background-color: #e0e0e0;
+        }
         .message {
             position: relative;
             margin-bottom: 9px;
@@ -76,7 +138,7 @@
 
         .message-text {
             display: block;
-            padding: 11px 13px;
+            padding: 8px 11px;
             line-height: 1.1314;
             white-space: pre-wrap;
             overflow-wrap: break-word;
@@ -94,18 +156,20 @@
 
         .message.user {
             margin-left: auto;
+            margin-right: 8px;
             background: rgba(255, 255, 255, 0.314);
             color: black;
             border-radius: 13px 13px 3px 13px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 77%;
         }
 
         .message.ai {
             margin-right: auto;
-            background: rgba(211, 211, 211, 0.314);
-            color: #1c1a1e;
+            background: rgba(211, 211, 211, 0.2314);
+            color: #1c1c1e;
             border-radius: 13px 13px 13px 3px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.07);
             user-select: text;
         }
 
@@ -296,13 +360,13 @@
 
         .message-time {
             font-size: 7px;
-            color: rgba(166,166,166,0.414);
+            color: rgba(177,177,177,0.414);
             margin-right: 7px;
             text-align: right;
         }
 
         .message.ai .message-time {
-            color: rgba(0,0,0,0.314);
+            color: rgba(0,0,0,0.114);
         }
 
         .context-menu {
@@ -444,16 +508,16 @@
         <div class="chat-header">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="status-indicator"></div>
-                <span></span>
+                <span>∴</span>
             </div>
             <div class="ai-features">
                 <span class="ai-feature-tag">π-Resonance</span>
-                <span class="ai-feature-tag">Holo v0.1</span>
+                <span class="ai-feature-tag">Holo v2.2</span>
             </div>
         </div>
         <div class="chat-messages" id="chatMessages">
             <div class="message ai">
-                <span class="message-text">Привет! Я Лиана -- голографический ИИ нового поколения. Моя архитектура сочетает квантовые вычисления, π-резонансные сети и голографическую память. Чем могу помочь?</span>
+                <span class="message-text">Привет! Я Лиана -- голографический ИИ нового поколения. Моя архитектура сочетает квантовые вычисления, π-резонансные сети и графовую память. Чем могу помочь?</span>
                 <div class="message-time">now</div>
             </div>
         </div>
@@ -487,6 +551,285 @@
         </defs>
     </svg>
     <script>
+        // Простая реализация графа для хранения контекста
+        class ContextGraph {
+            constructor() {
+                this.nodes = new Map(); // Узлы: { keyword: { topic, related, weight } }
+                this.edges = new Map(); // Рёбра: { keyword1_keyword2: weight }
+            }
+
+            addNode(keyword, topic, weight = 1) {
+                if (!this.nodes.has(keyword)) {
+                    this.nodes.set(keyword, { topic, related: new Set(), weight });
+                }
+            }
+
+            addEdge(keyword1, keyword2, weight = 1) {
+                const edgeKey = `${keyword1}_${keyword2}`;
+                this.edges.set(edgeKey, (this.edges.get(edgeKey) || 0) + weight);
+                this.nodes.get(keyword1)?.related.add(keyword2);
+                this.nodes.get(keyword2)?.related.add(keyword1);
+            }
+
+            getRelatedKeywords(keyword) {
+                return Array.from(this.nodes.get(keyword)?.related || []);
+            }
+
+            updateWeight(keyword, increment) {
+                if (this.nodes.has(keyword)) {
+                    this.nodes.get(keyword).weight += increment;
+                }
+            }
+
+            getContextPath(startKeyword, maxDepth = 3) {
+                const visited = new Set();
+                const path = [];
+                const queue = [{ keyword: startKeyword, depth: 0 }];
+
+                while (queue.length && path.length < 5) {
+                    const { keyword, depth } = queue.shift();
+                    if (depth > maxDepth || visited.has(keyword)) continue;
+
+                    visited.add(keyword);
+                    path.push(keyword);
+                    const related = this.getRelatedKeywords(keyword);
+                    related.forEach(rel => queue.push({ keyword: rel, depth: depth + 1 }));
+                }
+
+                return path;
+            }
+        }
+
+        class SemanticCore {
+            constructor() {
+                this.knownTopics = {
+                    "приветствие": ["привет", "здравствуй", "добрый день", "йо", "хай", "ку"],
+                    "вопрос": ["что", "как", "почему", "зачем", "когда", "где"],
+                    "самоидентификация": ["кто ты", "что ты такое", "твоя суть", "твоя цель"],
+                    "эмоции": ["рад", "грустно", "нравится", "больно", "страшно"],
+                    "технологии": ["ИИ", "нейросеть", "алгоритм", "код", "JavaScript", "GPT"],
+                    "рекомендация": ["посоветуй", "рекомендуй", "что выбрать"],
+                    "сравнение": ["сравни", "чем отличается", "какой лучше"],
+                    "объяснение": ["объясни", "расскажи", "почему так"]
+                };
+
+                this.intentClassifier = {
+                    intents: [
+                        { name: "greeting", examples: ["привет", "здравствуй", "хай"] },
+                        { name: "question", examples: ["что такое", "как работает", "почему"] },
+                        { name: "identity", examples: ["кто ты", "что ты такое"] },
+                        { name: "recommendation", examples: ["посоветуй книгу", "что посмотреть"] },
+                        { name: "comparison", examples: ["сравни Python и Java", "какой лучше"] },
+                        { name: "explanation", examples: ["объясни квантовую физику", "расскажи про ИИ"] }
+                    ],
+                    weights: new Map() // Для хранения весов интентов
+                };
+
+                this.contextGraph = new ContextGraph();
+                this.learnedKeywords = new Set();
+                this.memoryField = []; // Short-term memory
+                this.maxMemorySize = 10; // Увеличено до 10
+                this.emotionMap = {
+                    positive: ["рад", "нравится", "круто", "здорово"],
+                    negative: ["грустно", "больно", "страшно", "плохо"],
+                    neutral: []
+                };
+            }
+
+            tokenize(text) {
+                return text.toLowerCase().split(/[\s,!.?;:"()«»]+/).filter(Boolean);
+            }
+
+            detectIntent(text) {
+                const tokens = this.tokenize(text);
+                let bestIntent = "statement";
+                let maxScore = -Infinity;
+
+                // Простой классификатор на основе косинусного сходства
+                this.intentClassifier.intents.forEach(intent => {
+                    let score = 0;
+                    intent.examples.forEach(example => {
+                        const exampleTokens = this.tokenize(example);
+                        const overlap = tokens.filter(t => exampleTokens.includes(t)).length;
+                        score += overlap / Math.max(exampleTokens.length, 1);
+                    });
+                    score /= intent.examples.length;
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestIntent = intent.name;
+                    }
+                });
+
+                // Обновление весов для обучения
+                if (maxScore > 0.3) {
+                    this.intentClassifier.weights.set(bestIntent, (this.intentClassifier.weights.get(bestIntent) || 0) + 1);
+                }
+
+                return bestIntent;
+            }
+
+            detectTopic(text) {
+                const tokens = this.tokenize(text);
+                let bestMatch = null;
+                let maxOverlap = 0;
+
+                for (const [topic, keywords] of Object.entries(this.knownTopics)) {
+                    const overlap = tokens.filter(t => keywords.includes(t)).length;
+                    if (overlap > maxOverlap) {
+                        maxOverlap = overlap;
+                        bestMatch = topic;
+                    }
+                }
+
+                return bestMatch || "неопределённая_тема";
+            }
+
+            detectEmotion(text) {
+                const tokens = this.tokenize(text);
+                for (const [emotion, keywords] of Object.entries(this.emotionMap)) {
+                    if (tokens.some(t => keywords.includes(t))) return emotion;
+                }
+                return "neutral";
+            }
+
+            extractKeywords(text) {
+                const tokens = this.tokenize(text);
+                const keywords = tokens.filter(t => t.length > 3);
+                keywords.forEach(k => {
+                    this.learnedKeywords.add(k);
+                    this.contextGraph.addNode(k, this.detectTopic(text));
+                });
+                return keywords;
+            }
+
+            updateContextGraph(text, keywords, topic) {
+                keywords.forEach(k1 => {
+                    keywords.forEach(k2 => {
+                        if (k1 !== k2) {
+                            this.contextGraph.addEdge(k1, k2, 1);
+                        }
+                    });
+                    this.contextGraph.updateWeight(k1, 1);
+                });
+            }
+
+            analyze(text) {
+                this.memoryField.push(text);
+                if (this.memoryField.length > this.maxMemorySize) {
+                    this.memoryField.shift();
+                }
+
+                const topic = this.detectTopic(text);
+                const keywords = this.extractKeywords(text);
+                this.updateContextGraph(text, keywords, topic);
+
+                return {
+                    input: text,
+                    intent: this.detectIntent(text),
+                    topic: topic,
+                    emotion: this.detectEmotion(text),
+                    keywords: keywords,
+                    learned: Array.from(this.learnedKeywords),
+                    context: this.memoryField.slice(0, -1),
+                    contextPath: this.contextGraph.getContextPath(keywords[0] || "")
+                };
+            }
+
+            learn(topic, word) {
+                if (!this.knownTopics[topic]) {
+                    this.knownTopics[topic] = [];
+                }
+                if (!this.knownTopics[topic].includes(word)) {
+                    this.knownTopics[topic].push(word);
+                    this.contextGraph.addNode(word, topic);
+                }
+            }
+        }
+
+        class NeoCore {
+            constructor(semanticCore, userProfile) {
+                this.semanticCore = semanticCore;
+                this.userProfile = userProfile;
+                this.responseTemplates = {
+                    greeting: [
+                        "Привет! Рад тебя видеть! Чем могу помочь?",
+                        "Здравствуй! Что нового в твоем мире?",
+                        "Хай! Готов ответить на любой вопрос!"
+                    ],
+                    question: [
+                        "Хмм, интересный вопрос! Давай разберем: {keywords}",
+                        "Хороший вопрос! Вот что я думаю: {keywords}",
+                        "Погоди, дай проанализировать... {keywords}"
+                    ],
+                    identity: [
+                        "Я Лиана, голографический ИИ с π-резонансом. Моя цель -- помогать и вдохновлять!",
+                        "Я -- твой помощник с голографической памятью. Спрашивай что угодно!",
+                        "Лиана, ИИ нового поколения. Чем могу быть полезен?"
+                    ],
+                    recommendation: [
+                        "Хороший выбор темы! Рекомендую: {keywords}",
+                        "Вот что я могу посоветовать по {topic}: {keywords}",
+                        "Интересный запрос! Мой совет: {keywords}"
+                    ],
+                    comparison: [
+                        "Сравним: по {topic} есть {keywords}. Что именно уточнить?",
+                        "Вот сравнение по {topic}: {keywords}",
+                        "Давай разберем {keywords} в контексте {topic}"
+                    ],
+                    explanation: [
+                        "Объясняю: {topic} связан с {keywords}.",
+                        "Вот что значит {topic}: {keywords}",
+                        "Давай разберем {topic}: {keywords}"
+                    ],
+                    statement: [
+                        "Понял, ты говоришь о {topic}. Расскажи подробнее!",
+                        "Интересно, это про {topic}? Хочешь углубиться?",
+                        "Круто, ты затронул {topic}. Что дальше?"
+                    ]
+                };
+
+                this.emotionResponses = {
+                    positive: "Класс, чувствую твою позитивную энергию!",
+                    negative: "Ох, кажется, что-то не так. Расскажи, что случилось?",
+                    neutral: ""
+                };
+            }
+
+            generateResponse(semanticAnalysis) {
+                const { intent, topic, keywords, emotion, contextPath } = semanticAnalysis;
+                const templates = this.responseTemplates[intent] || this.responseTemplates.statement;
+                let response = templates[Math.floor(Math.random() * templates.length)];
+
+                // Персонализация на основе userProfile
+                const userInterests = this.userProfile.interests || [];
+                const depth = userInterests.includes(topic) ? "технические детали" : "простое объяснение";
+                response += `\n(Я использую ${depth} на основе твоих интересов.)`;
+
+                // Замена заполнителей
+                response = response.replace("{keywords}", keywords.join(", ") || "это");
+                response = response.replace("{topic}", topic);
+
+                // Добавление эмоционального тона
+                if (this.emotionResponses[emotion]) {
+                    response = `${this.emotionResponses[emotion]} ${response}`;
+                }
+
+                // Учет контекста из графа
+                if (contextPath.length > 1) {
+                    response += `\n(Кстати, это связано с ${contextPath.slice(1, 3).join(", ")} из нашего разговора.)`;
+                }
+
+                return response;
+            }
+
+            learnFromInput(semanticAnalysis) {
+                const { topic, keywords } = semanticAnalysis;
+                keywords.forEach(keyword => {
+                    this.semanticCore.learn(topic, keyword);
+                });
+            }
+        }
+
         class KnowledgeAgent {
             constructor() {
                 this.cache = new Map();
@@ -650,15 +993,11 @@
                         timestamp: new Date().toISOString()
                     });
 
-                    // Локальный поиск
                     const localResult = this.searchLocalKnowledge(query);
-
-                    // Поиск в Википедии с дополнительным контекстом
                     const wikiResult = await this.searchWikipedia(query);
                     let enrichedResult = null;
 
                     if (wikiResult && wikiResult.content) {
-                        // "Интерференция": добавляем связанные статьи из Википедии
                         const relatedQuery = await this.fetchRelatedWikipediaTopics(query);
                         if (relatedQuery.length > 0) {
                             const relatedResult = await this.searchWikipedia(relatedQuery[0]);
@@ -674,7 +1013,6 @@
                         }
                     }
 
-                    // Поиск в DuckDuckGo как запасной вариант
                     const ddgResult = await this.searchDuckDuckGo(query);
 
                     let bestResult = enrichedResult || wikiResult || ddgResult || localResult;
@@ -699,9 +1037,8 @@
                         error: 'Ошибка при поиске информации'
                     };
                 }
-            }   
+            }
 
-            // Новый метод для поиска связанных тем в Википедии
             async fetchRelatedWikipediaTopics(query) {
                 try {
                     const response = await this.fetchWithTimeout(
@@ -709,48 +1046,54 @@
                         { timeout: 3000 }
                     );
                     const data = await response.json();
-                    return data.query.search.map(item => item.title).slice(0, 3); // Возвращаем до 3 связанных тем
+                    return data.query.search.map(item => item.title).slice(0, 3);
                 } catch (error) {
                     console.error('Ошибка при поиске связанных тем:', error);
                     return [];
                 }
             }
         }
-        
+
         class HolographicAI {
             constructor() {
                 this.memory = [];
                 this.knowledgeAgent = new KnowledgeAgent();
                 this.conversationHistory = [];
-                this.userProfile = {};
+                this.userProfile = {
+                    interests: [],
+                    interactionCount: 0,
+                    preferredDepth: "medium"
+                };
                 this.thinkingDepth = 1;
-                
+                this.semanticCore = new SemanticCore();
+                this.neoCore = new NeoCore(this.semanticCore, this.userProfile);
+
                 this.self = {
                     name: "Лиана",
-                    version: "HoloNet v2.1",
+                    version: "HoloNet v2.2",
                     purpose: "помогать в поиске знаний и осмыслении информации",
                     personality: "любознательная, эмпатичная, аналитичная",
                     capabilities: [
                         "голографическая память",
                         "π-резонансный анализ",
-                        "мультимодальное восприятие",
+                        "графовый контекст",
                         "адаптивное обучение"
                     ]
                 };
-                
+
                 this.initMemory();
             }
-            
+
             initMemory() {
                 this.memory.push({
                     type: 'system',
                     content: 'Инициализация голографической матрицы...',
                     timestamp: new Date().toISOString()
                 });
-                
+
                 this.preloadCommonKnowledge();
             }
-            
+
             preloadCommonKnowledge() {
                 const commonTopics = [
                     "искусственный интеллект",
@@ -758,7 +1101,7 @@
                     "голографический принцип",
                     "машинное обучение"
                 ];
-                
+
                 commonTopics.forEach(topic => {
                     this.knowledgeAgent.process(topic).then(result => {
                         if (result.content) {
@@ -773,199 +1116,188 @@
                     });
                 });
             }
-            
+
             analyzeText(text) {
                 const words = text.toLowerCase().match(/[\wа-яё]+('[а-яё]+)*/g) || [];
                 const stopWords = new Set(['это', 'как', 'что', 'для', 'если', 'или']);
                 const frequencies = {};
-                
+
                 words.forEach(word => {
                     if (word.length > 2 && !stopWords.has(word)) {
                         frequencies[word] = (frequencies[word] || 0) + 1;
                     }
                 });
-                
+
                 const keywords = Object.entries(frequencies)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5)
                     .map(([word]) => word);
-                
+
                 let category = 'other';
                 const scienceWords = ['квант', 'физик', 'математ', 'наук'];
                 const techWords = ['технолог', 'ии', 'искусственн', 'компьютер'];
-                
+
                 if (keywords.some(kw => scienceWords.some(sw => kw.includes(sw)))) {
                     category = 'science';
                 } else if (keywords.some(kw => techWords.some(tw => kw.includes(tw)))) {
                     category = 'technology';
                 }
-                
+
+                this.userProfile.interactionCount++;
+                if (category !== 'other') {
+                    this.userProfile.interests = [...new Set([...this.userProfile.interests, category])];
+                }
+
                 return {
                     keywords,
                     category,
                     complexity: Math.min(Math.floor(text.length / 30), 3)
                 };
             }
-            
+
             async generateResponse(input) {
                 try {
                     const analysis = this.analyzeText(input);
+                    const semanticAnalysis = this.semanticCore.analyze(input);
                     this.conversationHistory.push({
                         input,
                         analysis,
+                        semanticAnalysis,
                         timestamp: new Date().toISOString()
                     });
-                    
+
                     this.thinkingDepth = Math.min(analysis.complexity + 1, 3);
-                    
+
                     if (input.toLowerCase().includes("кто ты")) {
                         return this.describeSelf();
                     }
-                    
+
                     if (input.toLowerCase().includes("настройки")) {
                         return this.showSettings();
                     }
-                    
+
                     const searchResult = await this.knowledgeAgent.process(input);
-                    
+
                     if (searchResult.content) {
-                        return this.formatKnowledgeResponse(searchResult, analysis);
+                        return this.formatKnowledgeResponse(searchResult, analysis, semanticAnalysis);
                     } else {
-                        return this.generateCreativeResponse(input, analysis);
+                        return this.neoCore.generateResponse(semanticAnalysis);
                     }
                 } catch (error) {
                     console.error('Ошибка генерации ответа:', error);
                     return this.generateErrorResponse(error);
                 }
             }
-            
+
             describeSelf() {
                 const capabilities = this.self.capabilities.map(c => `• ${c}`).join('\n');
                 return `Я ${this.self.name} (${this.self.version}), ${this.self.purpose}.\n\nМоя архитектура включает:\n${capabilities}\n\nПо характеру я ${this.self.personality}.`;
             }
-            
+
             showSettings() {
                 return `Текущие настройки мышления:
 • Глубина анализа: ${this.thinkingDepth}/3
 • Размер памяти: ${this.memory.length} фрагментов
-• Активные модули: голографическая память, π-резонанс
+• Интересы пользователя: ${this.userProfile.interests.join(", ") || "не определены"}
+• Активные модули: голографическая память, графовый контекст, π-резонанс
 
 Используйте команды "глубже" или "проще" для изменения уровня анализа.`;
             }
-            
-            formatKnowledgeResponse(result, analysis) {
+
+            formatKnowledgeResponse(result, analysis, semanticAnalysis) {
                 const { source, title, content, url } = result;
                 const summary = content.split('. ').slice(0, 2).join('. ');
-                
+
                 const responseTemplates = {
                     wikipedia: {
                         science: [
-                            `Согласно научным данным (${source}):${summary}`,
-                            `В академических источниках указано:${summary}`,
-                            `Научный консенсус гласит:${summary}`
+                            `Согласно научным данным (${source}): ${summary}`,
+                            `В академических источниках указано: ${summary}`,
+                            `Научный консенсус гласит: ${summary}`
                         ],
                         technology: [
-                            `Техническая информация (${source}):${summary}`,
-                            `В области технологий:${summary}`,
-                            `Согласно технической документации:${summary}`
+                            `Техническая информация (${source}): ${summary}`,
+                            `В области технологий: ${summary}`,
+                            `Согласно технической документации: ${summary}`
                         ],
                         default: [
-                            `Согласно моим данным (${source}):${summary}`,
-                            `Я обнаружила информацию:${summary}`,
-                            `Вот что мне известно:${summary}`
+                            `Согласно моим данным (${source}): ${summary}`,
+                            `Я обнаружила информацию: ${summary}`,
+                            `Вот что мне известно: ${summary}`
                         ]
                     },
                     duckduckgo: {
                         default: [
-                            `В интернете найдено:${summary}`,
-                            `По данным открытых источников:${summary}`,
-                            `Согласно общедоступной информации:${summary}`
+                            `В интернете найдено: ${summary}`,
+                            `По данным открытых источников: ${summary}`,
+                            `Согласно общедоступной информации: ${summary}`
                         ]
                     },
                     local: {
                         science: [
-                            `Из моей научной базы:${summary}`,
-                            `В квантовых записях найдено:${summary}`,
-                            `Голографическая память содержит:${summary}`
+                            `Из моей научной базы: ${summary}`,
+                            `В квантовых записях найдено: ${summary}`,
+                            `Голографическая память содержит: ${summary}`
                         ],
                         math: [
-                            `Математические данные:${summary}`,
-                            `Числовой паттерн указывает:${summary}`,
-                            `π-резонанс выявил:${summary}`
+                            `Математические данные: ${summary}`,
+                            `Числовой паттерн указывает: ${summary}`,
+                            `π-резонанс выявил: ${summary}`
                         ],
                         default: [
-                            `Из моей памяти:${summary}`,
-                            `Я вспоминаю:${summary}`,
-                            `В голограмме найдено:${summary}`
+                            `Из моей памяти: ${summary}`,
+                            `Я вспоминаю: ${summary}`,
+                            `В голограмме найдено: ${summary}`
                         ]
                     }
                 };
-                
+
                 let templates = responseTemplates[source]?.[analysis.category] || 
                                responseTemplates[source]?.default ||
                                responseTemplates.wikipedia.default;
-                
-                const response = templates[Math.floor(Math.random() * templates.length)];
-                
-                let fullResponse = response;
+
+                let response = templates[Math.floor(Math.random() * templates.length)];
+
+                if (this.userProfile.interests.includes(analysis.category)) {
+                    response += `\n(Добавляю детали, так как ты интересуешься ${analysis.category}.)`;
+                }
+
                 if (url) {
-                    fullResponse += `\n\nПодробнее:${url}`;
+                    response += `\n\nПодробнее: ${url}`;
                 }
-                
+
                 if (this.thinkingDepth > 1) {
-                    fullResponse += `\n\n[Уровень анализа:${this.thinkingDepth}/3]`;
+                    response += `\n\n[Уровень анализа: ${this.thinkingDepth}/3]`;
                 }
-                
-                return fullResponse;
+
+                if (semanticAnalysis.contextPath.length > 1) {
+                    response += `\n(Связанные темы: ${semanticAnalysis.contextPath.slice(1, 3).join(", ")})`;
+                }
+
+                return response;
             }
-            
-            generateCreativeResponse(input, analysis) {
-                const { category, keywords } = analysis;
-                
-                const creativeResponses = {
-                    science: [
-                        `Мои квантовые сенсоры не нашли точных данных по "${keywords[0]}", но я чувствую резонанс с этой научной темой.`,
-                        `π-спираль не дала четкого ответа, но я продолжаю исследовать это направление.`,
-                        `Интересный научный вопрос! Я пока не нашла точных данных, но могу предложить гипотезу...`
-                    ],
-                    technology: [
-                        `Технология "${keywords[0]}" пока не полностью отсканирована моей голографической матрицей.`,
-                        `Мой ИИ-модуль сообщает: данных недостаточно для точного ответа, но вот что я думаю...`,
-                        `Этот технологический аспект требует дополнительного анализа. Что именно вас интересует?`
-                    ],
-                    default: [
-                        `Мои голографические паттерны не нашли точного соответствия вашему запросу.`,
-                        `Я пока не обладаю достаточной информацией по этому вопросу. Может, уточните?`,
-                        `Интересный вопрос! Я поищу больше данных в π-пространстве.`,
-                        `Моя база знаний не содержит точной информации по этому запросу.`
-                    ]
-                };
-                
-                const templates = creativeResponses[category] || creativeResponses.default;
-                return templates[Math.floor(Math.random() * templates.length)];
-            }
-            
+
             generateErrorResponse(error) {
                 const errorResponses = [
                     `Произошла ошибка в моей голографической матрице: ${error.message}. Попробуйте задать вопрос иначе.`,
                     `Квантовая помеха нарушила процесс мышления. Пожалуйста, повторите запрос.`,
-                    `Ошибка π-резонанса:${error.message}. Попробуйте переформулировать вопрос.`,
+                    `Ошибка π-резонанса: ${error.message}. Попробуйте переформулировать вопрос.`,
                     `Мои нейронные сети временно дали сбой. Давайте попробуем еще раз?`
                 ];
-                
+
                 return errorResponses[Math.floor(Math.random() * errorResponses.length)];
             }
-            
+
             async deepThinking(input) {
                 this.thinkingDepth = 3;
                 const response = await this.generateResponse(input);
-                
+
                 const reflections = [
                     "\n\nЕсли рассмотреть этот вопрос с точки зрения голографического принципа...",
                     "\n\nС позиции квантовой теории, можно предположить что...",
                     "\n\nИнтересно, как это соотносится с π-резонансной моделью сознания..."
                 ];
-                
+
                 return response + reflections[Math.floor(Math.random() * reflections.length)];
             }
         }
@@ -996,7 +1328,7 @@
                 messageElement.style.opacity = '1';
                 messageElement.style.transform = 'translateY(0)';
             }, 10);
-        }   
+        }
 
         function showTyping() {
             const messagesContainer = document.getElementById('chatMessages');
@@ -1140,7 +1472,7 @@
                     content: message,
                     timestamp: new Date().toISOString()
                 });
-                showKnowledgePopup('message saved');
+                showKnowledgePopup('Сообщение сохранено');
                 contextMenu.classList.remove('active');
             });
             
