@@ -139,7 +139,7 @@
         .message-text {
             display: block;
             padding: 7.14px 7.14px;
-            font-size: 11px;
+            font-size: 13.4px;
             line-height: 1.1314;
             white-space: pre-wrap;
             overflow-wrap: break-word;
@@ -235,10 +235,10 @@
 
         .send-button {
             padding: 0;
-            width: 33px;
-            height: 33px;
+            width: 34.4px;
+            height: 34.4px;
             background: rgba(255, 255, 255, 0.2);
-            color: black;
+            color: grey;
             border: .314px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             font-size: 9px;
@@ -251,11 +251,11 @@
         }
 
         .send-button:hover {
-            transform: scale(1.1);
+            transform: scale(0.74);
         }
 
         .send-button:active {
-            transform: scale(1.314);
+            transform: scale(0.913);
         }
 
         .send-button:disabled {
@@ -267,7 +267,9 @@
         .typing {
             color: #1a1a1a;
             font-style: italic;
-            margin: 8px 0;
+            font-size: 11px;
+            margin-right: auto;
+            margin-left: 7.55px;
             animation: pulse 1.5s infinite;
             display: flex;
             align-items: center;
@@ -280,8 +282,8 @@
         }
 
         .typing-dot {
-            width: 6px;
-            height: 6px;
+            width: 2px;
+            height: 2px;
             background: #8e8e93;
             border-radius: 50%;
             animation: typingAnimation 1.1s infinite ease-in-out;
@@ -293,7 +295,7 @@
 
         @keyframes typingAnimation {
             0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-5px); }
+            30% { transform: translateY(-1.1px); }
         }
 
         @keyframes pulse {
@@ -341,6 +343,8 @@
         .status-indicator {
             width: 13px;
             height: 13px;
+            margin-right: auto;
+            margin-left: 7.55px;
             border-radius: 77%;
             background: #30d158;
             box-shadow: 0 0 0 2px rgba(48,209,88,0.3);
@@ -362,13 +366,13 @@
 
         .message-time {
             font-size: 7px;
-            color: rgba(177,177,177,0.414);
+            color: rgba(177,177,177,0.514);
             margin-right: 7px;
             text-align: right;
         }
 
         .message.ai .message-time {
-            color: rgba(0,0,0,0.114);
+            color: rgba(0,0,0,0.214);
         }
 
         .context-menu {
