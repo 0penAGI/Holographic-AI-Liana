@@ -226,7 +226,7 @@
         }
 
         .chat-input:focus {
-            border-color: #сссссс;
+            border-color: #cccccc;
             background: rgba(255, 255, 255, 0.05);
             box-shadow: 0 0 0 2px rgba(200, 200, 200, 0.1);
         }
@@ -551,24 +551,34 @@
         </defs>
     </svg>
     <script>
-        // Простая реализация графа для хранения контекста
+        
         class ContextGraph {
             constructor() {
-                this.nodes = new Map(); // Узлы: { keyword: { topic, related, weight } }
-                this.edges = new Map(); // Рёбра: { keyword1_keyword2: weight }
+                this.nodes = new Map(); // { keyword: { topic, related: Set, weight, history } }
+                this.edges = new Map(); // { keyword1_keyword2: weight }
+                this.pathCache = new Map(); // { startKeyword_maxDepth: path }
+                this.cacheSizeLimit = 100;
+                this.decayFactor = 0.98; // Коэффициент затухания веса со временем
             }
 
             addNode(keyword, topic, weight = 1) {
                 if (!this.nodes.has(keyword)) {
-                    this.nodes.set(keyword, { topic, related: new Set(), weight });
+                    this.nodes.set(keyword, {
+                        topic,
+                        related: new Set(),
+                        weight,
+                        history: [],
+                        lastUpdated: Date.now()
+                    });
                 }
             }
 
             addEdge(keyword1, keyword2, weight = 1) {
-                const edgeKey = `${keyword1}_${keyword2}`;
+                const edgeKey = this._edgeKey(keyword1, keyword2);
                 this.edges.set(edgeKey, (this.edges.get(edgeKey) || 0) + weight);
-                this.nodes.get(keyword1)?.related.add(keyword2);
-                this.nodes.get(keyword2)?.related.add(keyword1);
+                this._linkNodes(keyword1, keyword2);
+                this._invalidateCache(keyword1);
+                this._invalidateCache(keyword2);
             }
 
             getRelatedKeywords(keyword) {
@@ -577,147 +587,248 @@
 
             updateWeight(keyword, increment) {
                 if (this.nodes.has(keyword)) {
-                    this.nodes.get(keyword).weight += increment;
+                    const node = this.nodes.get(keyword);
+                    this._applyDecay(node); // перед обновлением веса
+                    node.weight += increment;
+                    node.history.push({ weight: node.weight, timestamp: Date.now() });
+                    if (node.history.length > 10) node.history.shift();
+                    node.lastUpdated = Date.now();
+                    this._invalidateCache(keyword);
                 }
             }
 
             getContextPath(startKeyword, maxDepth = 3) {
+                const cacheKey = `${startKeyword}_${maxDepth}`;
+                if (this.pathCache.has(cacheKey)) return this.pathCache.get(cacheKey);
+
                 const visited = new Set();
                 const path = [];
                 const queue = [{ keyword: startKeyword, depth: 0 }];
 
                 while (queue.length && path.length < 5) {
+                    // Сортировка очереди по убыванию веса и семантической близости
+                    queue.sort((a, b) => {
+                        const na = this.nodes.get(a.keyword);
+                        const nb = this.nodes.get(b.keyword);
+                        const wa = na ? na.weight : 0;
+                        const wb = nb ? nb.weight : 0;
+                        const sa = this._semanticSimilarity(startKeyword, a.keyword);
+                        const sb = this._semanticSimilarity(startKeyword, b.keyword);
+                        return (wb + sb) - (wa + sa);
+                    });
+
                     const { keyword, depth } = queue.shift();
                     if (depth > maxDepth || visited.has(keyword)) continue;
 
                     visited.add(keyword);
                     path.push(keyword);
                     const related = this.getRelatedKeywords(keyword);
-                    related.forEach(rel => queue.push({ keyword: rel, depth: depth + 1 }));
+                    related.forEach(rel => {
+                        if (!visited.has(rel)) {
+                            queue.push({ keyword: rel, depth: depth + 1 });
+                        }
+                    });
                 }
 
+                this._addToCache(cacheKey, path);
                 return path;
+            }
+
+            _edgeKey(k1, k2) {
+                return k1 < k2 ? `${k1}_${k2}` : `${k2}_${k1}`;
+            }
+
+            _linkNodes(k1, k2) {
+                if (this.nodes.has(k1)) this.nodes.get(k1).related.add(k2);
+                if (this.nodes.has(k2)) this.nodes.get(k2).related.add(k1);
+            }
+
+            _addToCache(key, path) {
+                if (this.pathCache.size >= this.cacheSizeLimit) {
+                    const oldestKey = this.pathCache.keys().next().value;
+                    this.pathCache.delete(oldestKey);
+                }
+                this.pathCache.set(key, path);
+            }
+
+            _invalidateCache(keyword) {
+                // Более мягкая инвалидация: только те пути, где keyword в начале или на 1-м уровне
+                for (const key of this.pathCache.keys()) {
+                    if (key.startsWith(`${keyword}_`)) {
+                        this.pathCache.delete(key);
+                    }
+                }
+            }
+
+            _applyDecay(node) {
+                const now = Date.now();
+                const age = now - node.lastUpdated;
+                const decaySteps = age / 60000; // 1 мин = 1 шаг затухания
+                node.weight *= Math.pow(this.decayFactor, decaySteps);
+            }
+
+            _semanticSimilarity(k1, k2) {
+                // Простая эвристика: совпадение префиксов или общая тема
+                const n1 = this.nodes.get(k1);
+                const n2 = this.nodes.get(k2);
+                if (!n1 || !n2) return 0;
+                if (n1.topic === n2.topic) return 0.5;
+                if (k1.startsWith(k2) || k2.startsWith(k1)) return 0.3;
+                return 0;
             }
         }
 
         class SemanticCore {
             constructor() {
                 this.knownTopics = {
-                    "приветствие": ["привет", "здравствуй", "добрый день", "йо", "хай", "ку"],
-                    "вопрос": ["что", "как", "почему", "зачем", "когда", "где"],
-                    "самоидентификация": ["кто ты", "что ты такое", "твоя суть", "твоя цель"],
-                    "эмоции": ["рад", "грустно", "нравится", "больно", "страшно"],
-                    "технологии": ["ИИ", "нейросеть", "алгоритм", "код", "JavaScript", "GPT"],
-                    "рекомендация": ["посоветуй", "рекомендуй", "что выбрать"],
-                    "сравнение": ["сравни", "чем отличается", "какой лучше"],
-                    "объяснение": ["объясни", "расскажи", "почему так"]
+                    "приветствие": new Set(["привет", "здравствуй", "добрый день", "йо", "хай", "ку"]),
+                    "вопрос": new Set(["что", "как", "почему", "зачем", "когда", "где"]),
+                    "самоидентификация": new Set(["кто ты", "что ты такое", "твоя суть", "твоя цель"]),
+                    "эмоции": new Set(["рад", "грустно", "нравится", "больно", "страшно"]),
+                    "технологии": new Set(["ИИ", "нейросеть", "алгоритм", "код", "JavaScript", "GPT"]),
+                    "рекомендация": new Set(["посоветуй", "рекомендуй", "что выбрать"]),
+                    "сравнение": new Set(["сравни", "чем отличается", "какой лучше"]),
+                    "объяснение": new Set(["объясни", "расскажи", "почему так", "умеешь"])
                 };
 
                 this.intentClassifier = {
                     intents: [
-                        { name: "greeting", examples: ["привет", "здравствуй", "хай"] },
-                        { name: "question", examples: ["что такое", "как работает", "почему"] },
-                        { name: "identity", examples: ["кто ты", "что ты такое"] },
-                        { name: "recommendation", examples: ["посоветуй книгу", "что посмотреть"] },
-                        { name: "comparison", examples: ["сравни Python и Java", "какой лучше"] },
-                        { name: "explanation", examples: ["объясни квантовую физику", "расскажи про ИИ"] }
+                        { 
+                            name: "greeting", 
+                            examples: ["привет", "здравствуй", "хай"],
+                            keywords: new Set(["привет", "здравствуй", "хай"])
+                        },
+                        { 
+                            name: "question", 
+                            examples: ["что такое", "как работает", "почему"],
+                            keywords: new Set(["что", "как", "почему"])
+                        },
+                        { 
+                            name: "identity", 
+                            examples: ["кто ты", "что ты такое"],
+                            keywords: new Set(["кто", "что", "ты"])
+                        },
+                        { 
+                            name: "recommendation", 
+                            examples: ["посоветуй книгу", "что посмотреть"],
+                            keywords: new Set(["посоветуй", "рекомендуй", "что выбрать"])
+                        },
+                        { 
+                            name: "comparison", 
+                            examples: ["сравни Python и Java", "какой лучше"],
+                            keywords: new Set(["сравни", "чем отличается", "какой лучше"])
+                        },
+                        { 
+                            name: "explanation", 
+                            examples: ["объясни квантовую физику", "расскажи про ИИ","что ты умеешь"],
+                            keywords: new Set(["объясни", "расскажи", "почему", "умеешь"])
+                        }
                     ],
-                    weights: new Map() // Для хранения весов интентов
+                    weights: new Map()
                 };
 
                 this.contextGraph = new ContextGraph();
                 this.learnedKeywords = new Set();
-                this.memoryField = []; // Short-term memory
-                this.maxMemorySize = 10; // Увеличено до 10
+                this.memoryField = [];
+                this.maxMemorySize = 10;
+
                 this.emotionMap = {
-                    positive: ["рад", "нравится", "круто", "здорово"],
-                    negative: ["грустно", "больно", "страшно", "плохо"],
-                    neutral: []
+                    positive: new Set(["рад", "нравится", "круто", "здорово"]),
+                    negative: new Set(["грустно", "больно", "страшно", "плохо"]),
+                    neutral: new Set()
                 };
             }
 
             tokenize(text) {
-                return text.toLowerCase().split(/[\s,!.?;:"()«»]+/).filter(Boolean);
+                return text.toLowerCase().match(/[\wа-яё]+/g) || [];
             }
 
             detectIntent(text) {
-                const tokens = this.tokenize(text);
+                const tokens = new Set(this.tokenize(text));
                 let bestIntent = "statement";
-                let maxScore = -Infinity;
+                let maxScore = 0;
 
-                // Простой классификатор на основе косинусного сходства
-                this.intentClassifier.intents.forEach(intent => {
+                for (const intent of this.intentClassifier.intents) {
                     let score = 0;
-                    intent.examples.forEach(example => {
-                        const exampleTokens = this.tokenize(example);
-                        const overlap = tokens.filter(t => exampleTokens.includes(t)).length;
-                        score += overlap / Math.max(exampleTokens.length, 1);
-                    });
-                    score /= intent.examples.length;
+                    const intersection = new Set(
+                        [...tokens].filter(x => intent.keywords.has(x))
+                    ).size;
+
+                    score = intersection / (intent.keywords.size || 1);
+
                     if (score > maxScore) {
                         maxScore = score;
                         bestIntent = intent.name;
                     }
-                });
+                }
 
-                // Обновление весов для обучения
                 if (maxScore > 0.3) {
-                    this.intentClassifier.weights.set(bestIntent, (this.intentClassifier.weights.get(bestIntent) || 0) + 1);
+                    const currentWeight = this.intentClassifier.weights.get(bestIntent) || 0;
+                    this.intentClassifier.weights.set(bestIntent, currentWeight + 1);
                 }
 
                 return bestIntent;
             }
 
             detectTopic(text) {
-                const tokens = this.tokenize(text);
-                let bestMatch = null;
+                const tokens = new Set(this.tokenize(text));
+                let bestMatch = "неопределённая_тема";
                 let maxOverlap = 0;
 
                 for (const [topic, keywords] of Object.entries(this.knownTopics)) {
-                    const overlap = tokens.filter(t => keywords.includes(t)).length;
+                    const overlap = new Set(
+                        [...tokens].filter(x => keywords.has(x))
+                    ).size;
+
                     if (overlap > maxOverlap) {
                         maxOverlap = overlap;
                         bestMatch = topic;
                     }
                 }
 
-                return bestMatch || "неопределённая_тема";
+                return bestMatch;
             }
 
             detectEmotion(text) {
-                const tokens = this.tokenize(text);
+                const tokens = new Set(this.tokenize(text));
+
                 for (const [emotion, keywords] of Object.entries(this.emotionMap)) {
-                    if (tokens.some(t => keywords.includes(t))) return emotion;
+                    if ([...tokens].some(t => keywords.has(t))) {
+                        return emotion;
+                    }
                 }
+
                 return "neutral";
             }
 
             extractKeywords(text) {
                 const tokens = this.tokenize(text);
                 const keywords = tokens.filter(t => t.length > 3);
+
                 keywords.forEach(k => {
-                    this.learnedKeywords.add(k);
-                    this.contextGraph.addNode(k, this.detectTopic(text));
+                    if (!this.learnedKeywords.has(k)) {
+                        this.learnedKeywords.add(k);
+                        this.contextGraph.addNode(k, this.detectTopic(text));
+                    }
                 });
+
                 return keywords;
             }
 
             updateContextGraph(text, keywords, topic) {
-                keywords.forEach(k1 => {
-                    keywords.forEach(k2 => {
-                        if (k1 !== k2) {
-                            this.contextGraph.addEdge(k1, k2, 1);
-                        }
-                    });
-                    this.contextGraph.updateWeight(k1, 1);
-                });
+                for (let i = 0; i < keywords.length; i++) {
+                    for (let j = i + 1; j < keywords.length; j++) {
+                        this.contextGraph.addEdge(keywords[i], keywords[j], 1);
+                    }
+                    this.contextGraph.updateWeight(keywords[i], 1);
+                }
             }
 
             analyze(text) {
-                this.memoryField.push(text);
-                if (this.memoryField.length > this.maxMemorySize) {
+                if (this.memoryField.length >= this.maxMemorySize) {
                     this.memoryField.shift();
                 }
+                this.memoryField.push(text);
 
                 const topic = this.detectTopic(text);
                 const keywords = this.extractKeywords(text);
@@ -737,15 +848,14 @@
 
             learn(topic, word) {
                 if (!this.knownTopics[topic]) {
-                    this.knownTopics[topic] = [];
+                    this.knownTopics[topic] = new Set();
                 }
-                if (!this.knownTopics[topic].includes(word)) {
-                    this.knownTopics[topic].push(word);
-                    this.contextGraph.addNode(word, topic);
-                }
+                this.knownTopics[topic].add(word);
+                this.contextGraph.addNode(word, topic);
             }
         }
 
+        
         class NeoCore {
             constructor(semanticCore, userProfile) {
                 this.semanticCore = semanticCore;
@@ -793,16 +903,30 @@
                     negative: "Ох, кажется, что-то не так. Расскажи, что случилось?",
                     neutral: ""
                 };
+
+                this.responseCache = new Map(); // Кэш ответов: { intent_topic_keywords: response }
+                this.cacheSizeLimit = 50; // Ограничение размера кэша
+                this.queryHistory = []; // История запросов: [{ intent, topic, keywords, timestamp }]
+                this.historySizeLimit = 20; // Ограничение размера истории
+                this.topicFrequency = new Map(); // Частота тем: { topic: count }
             }
 
             generateResponse(semanticAnalysis) {
                 const { intent, topic, keywords, emotion, contextPath } = semanticAnalysis;
+                const cacheKey = `${intent}_${topic}_${keywords.join("|")}`;
+
+                // Проверка кэша
+                if (this.responseCache.has(cacheKey)) {
+                    return this.responseCache.get(cacheKey);
+                }
+
                 const templates = this.responseTemplates[intent] || this.responseTemplates.statement;
                 let response = templates[Math.floor(Math.random() * templates.length)];
 
-                // Персонализация на основе userProfile
+                // Персонализация на основе userProfile и истории запросов
                 const userInterests = this.userProfile.interests || [];
-                const depth = userInterests.includes(topic) ? "технические детали" : "простое объяснение";
+                const isFrequentTopic = this.topicFrequency.get(topic) > 2 || this.queryHistory.filter(q => q.topic === topic).length > 2;
+                const depth = isFrequentTopic || userInterests.includes(topic) ? "технические детали" : "простое объяснение";
                 response += `\n(Я использую ${depth} на основе твоих интересов.)`;
 
                 // Замена заполнителей
@@ -819,6 +943,13 @@
                     response += `\n(Кстати, это связано с ${contextPath.slice(1, 3).join(", ")} из нашего разговора.)`;
                 }
 
+                // Сохранение в кэш
+                this._addToCache(cacheKey, response);
+
+                // Обновление истории запросов и частоты тем
+                this._addToHistory({ intent, topic, keywords, timestamp: Date.now() });
+                this._updateTopicFrequency(topic);
+
                 return response;
             }
 
@@ -827,8 +958,31 @@
                 keywords.forEach(keyword => {
                     this.semanticCore.learn(topic, keyword);
                 });
+
+                // Обновление истории и частоты тем
+                this._addToHistory({ topic, keywords, timestamp: Date.now() });
+                this._updateTopicFrequency(topic);
             }
-        }
+
+            _addToCache(key, response) {
+                if (this.responseCache.size >= this.cacheSizeLimit) {
+                    const oldestKey = this.responseCache.keys().next().value;
+                    this.responseCache.delete(oldestKey);
+                }
+                this.responseCache.set(key, response);
+            }
+
+            _addToHistory(query) {
+                this.queryHistory.push(query);
+                if (this.queryHistory.length > this.historySizeLimit) {
+                    this.queryHistory.shift();
+                }
+            }
+
+            _updateTopicFrequency(topic) {
+                this.topicFrequency.set(topic, (this.topicFrequency.get(topic) || 0) + 1);
+            }
+    }
 
         class KnowledgeAgent {
             constructor() {
