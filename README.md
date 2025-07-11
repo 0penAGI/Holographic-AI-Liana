@@ -59,11 +59,11 @@ Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deli
 
 ### Technical Details
 
-•  **Frontend**:
+- •  ####**Frontend**:
 - HTML/CSS: Responsive design with a gradient background, animations, and a glassmorphism-inspired UI.
 - JavaScript: Handles dynamic message rendering, context menus, and AI logic.
 - SVG: Uses the SVG namespace for the send button icon (see W3C SVG Specification).
-•  **Backend Logic**:
+- •  ####**Backend Logic**:
 - SemanticCore: Tokenizes input, detects intent, topics, and emotions, and builds a context graph.
 - NeoCore: Generates personalized responses based on user profiles and semantic analysis.
 - KnowledgeAgent: Fetches data from Wikipedia, DuckDuckGo, and a local knowledge base with caching and timeout handling.
