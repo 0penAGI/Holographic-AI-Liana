@@ -738,7 +738,8 @@
                 this.emotionMap = {
                     positive: new Set(["рад", "нравится", "круто", "здорово", "вау", "ахах", "смешной"]),
                     negative: new Set(["грустно", "больно", "страшно", "плохо", "бля", "сэд"]),
-                    neutral: new Set()
+                    neutral: new Set(),
+                    mixed: new Set(["грустно но", "ахах но", "круто но", "рад но"])
                 };
                 this._context = {
                     depth: 0,
@@ -820,29 +821,27 @@
             }
 
             detectEmotion(text) {
-                if (text.includes('😄') || text.includes('😊')) return 'positive';
+                if (text.includes('😄') || text.includes('😊') || text.includes('😂')) return 'positive';
                 if (text.includes('😢') || text.includes('😔')) return 'negative';
-                if (text.includes('😂')) return 'positive';
-                if (text.includes('😢')) return 'negative';
-                // Добавить больше смайликов в emotionMap
-                this.emotionMap.positive.add('😂');
-                this.emotionMap.negative.add('😢');
-
                 const tokens = new Set(this.tokenize(text));
-                let emotion = "neutral";
+                let emotions = [];
                 for (const [emo, keywords] of Object.entries(this.emotionMap)) {
                     if ([...tokens].some(t => keywords.has(t))) {
-                        emotion = emo;
-                        break;
+                        emotions.push(emo);
                     }
                 }
-                if (emotion === "positive" && tokens.has("смешной") || tokens.has("ахах")) {
-                    this._context.humorLevel = Math.min(this._context.humorLevel + 0.2, 1);
-                } else if (emotion !== "positive") {
+                if (emotions.includes('mixed') || emotions.length > 1) {
                     this._context.humorLevel = Math.max(this._context.humorLevel - 0.1, 0);
+                    return 'mixed';
                 }
+                const emotion = emotions[0] || 'neutral';
                 this._context.lastEmotion = this._context.mood;
                 this._context.mood = emotion;
+                if (emotion === 'positive') {
+                    this._context.humorLevel = Math.min(this._context.humorLevel + 0.2, 1);
+                } else if (emotion === 'negative' || emotion === 'mixed') {
+                    this._context.humorLevel = Math.max(this._context.humorLevel - 0.1, 0);
+                }
                 return emotion;
             }
 
@@ -923,7 +922,7 @@
                     question: (kw, depth) => {
                         switch (depth) {
                             case 0: return [`Простыми словами: ${kw[0] || 'это'}? {keywords}`];
-                            case 1: return [`Технически: ${kw[0] || 'вопрос'} — {keywords}`];
+                            case 1: return [`Технически: ${kw[0] || 'вопрос'} -- {keywords}`];
                             case 2: return [`Глубоко: ${kw[0] || 'вопрос'} связан с {keywords}`];
                             default: return [`Хмм, ${kw[0] || 'вопрос'}? {keywords}`];
                         }
@@ -980,7 +979,7 @@
                         const baseResponses = {
                             positive: [
                                 depth === 0 ? `Класс!${topic ? ' ' + topic : ''} зажигает!` :
-                                depth === 1 ? `Вау!${topic ? ' ' + topic : ''} — круто!` :
+                                depth === 1 ? `Вау!${topic ? ' ' + topic : ''} -- круто!` :
                                 `Энергия${topic ? ' в ' + topic : ''} на π-уровне!`,
                                 "Рад твоему настроению! 😄",
                                 "☆ヽ(◕ヮ◕ヽ) Это зажигает!"
@@ -998,14 +997,21 @@
                                 `Зафиксировал${topic ? ': ' + topic : ''}. Глубже?`,
                                 "Хорошо, о чем думаем?",
                                 "Давай продолжим!"
+                            ],
+                            mixed: [
+                                depth === 0 ? `Ого, смешанные чувства${topic ? ' в ' + topic : ''}? Расскажи!` :
+                                depth === 1 ? `Заметил твой вайб${topic ? ' в ' + topic : ''}. Что дальше?` :
+                                `Квантовый микс эмоций${topic ? ' в ' + topic : ''}! Давай разберёмся?`,
+                                "Понимаю, и радость, и грусть... Поговорим?",
+                                "Хм, интересный коктейль эмоций! 😄😢"
                             ]
                         };
                         if (humorLevel > 0.5) {
                             baseResponses.positive.push("Ха-ха, давай ещё посмеёмся?");
-                            baseResponses.neutral.push("Может, анекдот для настроения? 😄");
+                            baseResponses.mixed.push("Шутка или поддержка? Выбирай! 😜");
                         }
-                        return baseResponses[humorLevel > 0.5 ? 'positive' : topic];
-                    }
+                    return baseResponses[humorLevel > 0.5 ? 'positive' : topic] || baseResponses[emotion];
+                }
                 };
 
                 this.emotionResponses = {
@@ -1155,15 +1161,15 @@
                     local: {
                         physics: {
                             "квантовая физика": "Квантовая физика изучает поведение материи на атомных уровнях.",
-                            "спин электрона": "Спин — квантовая характеристика частиц."
+                            "спин электрона": "Спин -- квантовая характеристика частиц."
                         },
                         math: {
                             "число пи": "π ≈ 3.14159, отношение длины окружности к диаметру.",
                             "золотое сечение": "Золотое сечение ≈ 1.618, гармоничное отношение."
                         },
                         humor: {
-                            "смешной": "Юмор — это искусство вызывать улыбки и смех!",
-                            "ахах": "Смех продлевает жизнь, так что ахах — это здорово!"
+                            "смешной": "Юмор -- это искусство вызывать улыбки и смех!",
+                            "ахах": "Смех продлевает жизнь, так что ахах -- это здорово!"
                         }
                     }
                 };
