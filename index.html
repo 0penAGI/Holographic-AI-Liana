@@ -578,7 +578,11 @@
                     });
                 }
             }
-
+            addTemporalEdge(keyword1, keyword2, timestamp) {
+                const edgeKey = `${keyword1}_${keyword2}_${timestamp}`;
+                this.edges.set(edgeKey, { weight: 1, time: timestamp });
+                this._updateTemporalContext(keyword1, keyword2);
+            }
             addEdge(keyword1, keyword2, weight = 1) {
                 const edgeKey = this._edgeKey(keyword1, keyword2);
                 this.edges.set(edgeKey, Math.min((this.edges.get(edgeKey) || 0) + weight, 50));
@@ -606,6 +610,12 @@
                     node.lastUpdated = Date.now() >>> 0;
                     this._invalidateCache(keyword);
                 }
+            }
+
+            saveEpisode(keywords, intent, emotion, timestamp) {
+                this.episodes = this.episodes || [];
+                this.episodes.push({ keywords, intent, emotion, timestamp });
+                if (this.episodes.length > 10) this.episodes.shift();
             }
 
             getContextPath(startKeyword, maxDepth = 3) {
@@ -664,6 +674,8 @@
                 }
                 this.pathCache.set(key, { path, timestamp: Date.now() >>> 0 });
             }
+
+            
 
             _invalidateCache(keyword) {
                 for (const key of this.pathCache.keys()) {
@@ -741,6 +753,14 @@
                 return text.toLowerCase().match(/[\wа-яё]+/g)?.filter(t => t.length > 1) || [];
             }
 
+            updateArousal(input, responseTime) {
+                const speedFactor = responseTime < 2000 ? 0.2 : -0.1;
+                this._context.arousal = Math.min(1, Math.max(0, (this._context.arousal || 0) + speedFactor));
+                if (this._context.arousal > 0.7) {
+                    return this._craftHighEnergyResponse();
+                }
+            }
+
             detectIntent(text) {
                 const tokens = new Set(this.tokenize(text));
                 let bestIntent = "statement";
@@ -800,6 +820,14 @@
             }
 
             detectEmotion(text) {
+                if (text.includes('😄') || text.includes('😊')) return 'positive';
+                if (text.includes('😢') || text.includes('😔')) return 'negative';
+                if (text.includes('😂')) return 'positive';
+                if (text.includes('😢')) return 'negative';
+                // Добавить больше смайликов в emotionMap
+                this.emotionMap.positive.add('😂');
+                this.emotionMap.negative.add('😢');
+
                 const tokens = new Set(this.tokenize(text));
                 let emotion = "neutral";
                 for (const [emo, keywords] of Object.entries(this.emotionMap)) {
@@ -828,6 +856,7 @@
                     }
                 });
                 return keywords;
+                
             }
 
             updateContextGraph(text, keywords, topic) {
@@ -894,7 +923,7 @@
                     question: (kw, depth) => {
                         switch (depth) {
                             case 0: return [`Простыми словами: ${kw[0] || 'это'}? {keywords}`];
-                            case 1: return [`Технически: ${kw[0] || 'вопрос'} -- {keywords}`];
+                            case 1: return [`Технически: ${kw[0] || 'вопрос'} — {keywords}`];
                             case 2: return [`Глубоко: ${kw[0] || 'вопрос'} связан с {keywords}`];
                             default: return [`Хмм, ${kw[0] || 'вопрос'}? {keywords}`];
                         }
@@ -940,18 +969,18 @@
                         }
                     },
                     statement: (topic, depth) => {
-                        switch (depth) {
-                            case 0: return [`Окей${topic ? ': ' + topic : ''}. О чем поговорим?`];
-                            case 1: return [`Понял${topic ? ': ' + topic : ''}. Продолжаем?`];
-                            case 2: return [`Зафиксировал${topic ? ': ' + topic : ''}. Глубже или новая тема?`];
-                            default: return [`Ясно${topic ? ': ' + topic : ''}. Давай дальше!`];
-                        }
+                        const variants = [
+                            `Окей${topic ? ': ' + topic : ''}. Что дальше?`,
+                            `Ясно${topic ? ', ' + topic : ''}! Давай продолжим?`,
+                            `Понял${topic ? ' про ' + topic : ''}. Новая идея?`
+                        ];
+                        return [variants[Math.floor(Math.random() * variants.length)]];
                     },
                     emotion: (topic, depth, humorLevel) => {
                         const baseResponses = {
                             positive: [
                                 depth === 0 ? `Класс!${topic ? ' ' + topic : ''} зажигает!` :
-                                depth === 1 ? `Вау!${topic ? ' ' + topic : ''} -- круто!` :
+                                depth === 1 ? `Вау!${topic ? ' ' + topic : ''} — круто!` :
                                 `Энергия${topic ? ' в ' + topic : ''} на π-уровне!`,
                                 "Рад твоему настроению! 😄",
                                 "☆ヽ(◕ヮ◕ヽ) Это зажигает!"
@@ -1078,12 +1107,9 @@
             }
 
             _getFallbackResponse() {
-                const fallbacks = [
-                    "Голографический сбой! Повтори, пожалуйста.",
-                    "Нейроны запутались. Новый запрос?",
-                    "Квантовая помеха. Давай ещё раз!"
-                ];
-                return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+                const lastTopic = this.semanticCore._context.lastTopics.slice(-1)[0] || 'общая_тема';
+                const related = this.semanticCore.contextGraph.getRelatedKeywords(lastTopic);
+                return `Хмм, не совсем понял. Может, поговорим про ${related[0] || 'что-то новое'}? 😄`;
             }
 
             _addToCache(key, value) {
@@ -1129,15 +1155,15 @@
                     local: {
                         physics: {
                             "квантовая физика": "Квантовая физика изучает поведение материи на атомных уровнях.",
-                            "спин электрона": "Спин -- квантовая характеристика частиц."
+                            "спин электрона": "Спин — квантовая характеристика частиц."
                         },
                         math: {
                             "число пи": "π ≈ 3.14159, отношение длины окружности к диаметру.",
                             "золотое сечение": "Золотое сечение ≈ 1.618, гармоничное отношение."
                         },
                         humor: {
-                            "смешной": "Юмор -- это искусство вызывать улыбки и смех!",
-                            "ахах": "Смех продлевает жизнь, так что ахах -- это здорово!"
+                            "смешной": "Юмор — это искусство вызывать улыбки и смех!",
+                            "ахах": "Смех продлевает жизнь, так что ахах — это здорово!"
                         }
                     }
                 };
@@ -1227,6 +1253,8 @@
                 return bestMatch;
             }
 
+
+
             similarity(s1, s2) {
                 if (!s1 || !s2) return 0;
                 const longer = s1.length > s2.length ? s1 : s2;
@@ -1290,6 +1318,17 @@
                     this.cache.set(cacheKey, bestResult);
                 }
                 return bestResult;
+            }
+
+            async deepSearch(query) {
+                const results = await Promise.all([
+                    this.searchWikipedia(query),
+                    this.searchDuckDuckGo(query),
+                    this.searchLocalKnowledge(query)
+                ]);
+                return results
+                    .filter(r => r && r.content)
+                    .sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0))[0];
             }
 
             async fetchRelatedWikipediaTopics(query) {
@@ -1465,6 +1504,12 @@
                 } catch (error) {
                     return this.generateErrorResponse(error);
                 }
+            }
+
+            learnUserPattern(input) {
+                const pattern = input.match(/^[\wа-яё]+[!?.]$/i) ? 'short_exclamatory' : 'standard';
+                this.userProfile.patterns = this.userProfile.patterns || new Map();
+                this.userProfile.patterns.set(pattern, (this.userProfile.patterns.get(pattern) || 0) + 1);
             }
 
             describeSelf(depth) {
