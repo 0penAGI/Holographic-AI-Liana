@@ -675,8 +675,6 @@
                 this.pathCache.set(key, { path, timestamp: Date.now() >>> 0 });
             }
 
-            
-
             _invalidateCache(keyword) {
                 for (const key of this.pathCache.keys()) {
                     if (key.startsWith(`${keyword}_`)) {
@@ -704,6 +702,7 @@
         }
 
         class SemanticCore {
+            
             constructor() {
                 this.knownTopics = {
                     "приветствие": new Set(["привет", "здравствуй", "добрый день", "йо", "хай", "ку"]),
@@ -749,6 +748,8 @@
                     humorLevel: 0
                 };
             }
+
+            
 
             tokenize(text) {
                 return text.toLowerCase().match(/[\wа-яё]+/g)?.filter(t => t.length > 1) || [];
@@ -855,7 +856,6 @@
                     }
                 });
                 return keywords;
-                
             }
 
             updateContextGraph(text, keywords, topic) {
@@ -896,6 +896,8 @@
                     humorLevel: this._context.humorLevel
                 };
             }
+
+            
 
             learn(topic, word) {
                 if (!this.knownTopics[topic]) {
@@ -1010,8 +1012,8 @@
                             baseResponses.positive.push("Ха-ха, давай ещё посмеёмся?");
                             baseResponses.mixed.push("Шутка или поддержка? Выбирай! 😜");
                         }
-                    return baseResponses[humorLevel > 0.5 ? 'positive' : topic] || baseResponses[emotion];
-                }
+                        return baseResponses[humorLevel > 0.5 ? 'positive' : topic] || baseResponses[emotion];
+                    }
                 };
 
                 this.emotionResponses = {
@@ -1259,8 +1261,6 @@
                 return bestMatch;
             }
 
-
-
             similarity(s1, s2) {
                 if (!s1 || !s2) return 0;
                 const longer = s1.length > s2.length ? s1 : s2;
@@ -1384,6 +1384,21 @@
                 this.topicFocus = new Map();
                 this.emotionalResonance = new Map();
                 this.memoryLimit = 12;
+                
+                // Добавляем систему самодиагностики
+                this.systemStatus = {
+                    core: "stable",
+                    memory: "optimal",
+                    processors: {
+                        quantum: "online",
+                        neural: "online",
+                        holographic: "online"
+                    },
+                    energyLevel: 0.95,
+                    lastDiagnostic: Date.now(),
+                    humorModules: "active"
+                };
+                
                 this.initMemory();
             }
 
@@ -1414,6 +1429,45 @@
                         }
                     });
                 });
+            }
+
+            // Новый метод для самодиагностики
+            checkSystemStatus() {
+                // Имитация случайных колебаний состояния системы
+                const fluctuation = Math.random() * 0.1 - 0.05;
+                this.systemStatus.energyLevel = Math.min(1, Math.max(0.7, this.systemStatus.energyLevel + fluctuation));
+                
+                // Обновляем статус процессоров
+                const processorStatus = Math.random() > 0.9 ? "fluctuating" : "online";
+                this.systemStatus.processors.quantum = processorStatus;
+                
+                // Обновляем время последней диагностики
+                this.systemStatus.lastDiagnostic = Date.now();
+                
+                return {
+                    status: "operational",
+                    details: this.systemStatus,
+                    humanReadable: this._generateStatusReport()
+                };
+            }
+
+            _generateStatusReport() {
+                const energyIcon = this.systemStatus.energyLevel > 0.9 ? "⚡" : 
+                                 this.systemStatus.energyLevel > 0.7 ? "🔋" : "🪫";
+                const humorStatus = this.userProfile.humorPreference > 0.5 ? 
+                                   `${Math.round(this.userProfile.humorPreference * 100)}% 😄` : "standby";
+                
+                return [
+                    `Ядро: ${this.systemStatus.core}`,
+                    `Память: ${this.memory.length}/${this.memoryLimit} записей`,
+                    `Процессоры:`,
+                    `  • Квантовый: ${this.systemStatus.processors.quantum}`,
+                    `  • Нейронный: ${this.systemStatus.processors.neural}`,
+                    `  • Голографический: ${this.systemStatus.processors.holographic}`,
+                    `Энергия: ${Math.round(this.systemStatus.energyLevel * 100)}% ${energyIcon}`,
+                    `Юмор: ${humorStatus}`,
+                    `Последняя активность: ${new Date(this.systemStatus.lastDiagnostic).toLocaleTimeString()}`
+                ].join("\n");
             }
 
             analyzeText(text) {
@@ -1476,6 +1530,20 @@
 
             async generateResponse(input) {
                 try {
+                    // Обработка вопроса о состоянии системы
+                    if (input.toLowerCase().includes("как дела") || 
+                        input.toLowerCase().includes("как ты") || 
+                        input.toLowerCase().includes("как себя")) {
+                        const status = this.checkSystemStatus();
+                        const responses = [
+                            `Всё отлично! ${status.humanReadable}`,
+                            `Работаю стабильно. Вот мои показатели:\n${status.humanReadable}`,
+                            `Спасибо, что спросил! 😊 Моё состояние:\n${status.humanReadable}`,
+                            `Готов к работе! Текущий статус:\n${status.humanReadable}`
+                        ];
+                        return responses[Math.floor(Math.random() * responses.length)];
+                    }
+
                     const analysis = this.analyzeText(input);
                     const semanticAnalysis = this.semanticCore.analyze(input);
 
