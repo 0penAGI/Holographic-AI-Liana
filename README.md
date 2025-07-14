@@ -1,6 +1,8 @@
 # **HoloNet**
 
-HoloNet is a sophisticated, holographic AI-powered chat interface designed to provide an immersive and intelligent conversational experience. Built with modern web technologies, it combines a visually appealing UI with advanced natural language processing, context-aware responses, and knowledge retrieval capabilities. The project leverages SVG for scalable graphics, a custom semantic analysis engine, and external APIs for enriched responses.
+
+HoloNet is a holographic AI-powered chat interface designed for intuitive and engaging user interactions. It combines advanced natural language processing, contextual analysis, and a visually appealing UI with a focus on adaptability and humor.
+
 
 
 ![Liana Logo](https://github.com/user-attachments/assets/3ff22b3e-d71c-494a-90b8-b6fcefa5fd94)
@@ -11,12 +13,13 @@ Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deli
 ## Features
 
 - **Interactive UI**: A sleek, mobile-friendly UI with animated message transitions and a dynamic, pulsating background.
-- **Holographic AI (Liana)**: A self-described “golographic AI” with π-resonance networks and graph-based memory for contextual understanding.
+- **Holographic AI (Holo)**: A self-described “golographic AI” with π-resonance networks and graph-based memory for contextual understanding.
 - **Semantic Analysis**: Detects intent, topics, emotions, and keywords using a custom SemanticCore class.
-- **Contextual Memory**: Maintains conversation history and user interests for personalized responses.
-- **Knowledge Agent**: Searches and caches information from Wikipedia, DuckDuckGo, and a local knowledge base for fast, reliable responses.
+- **Contextual Memory**: Utilizes a `ContextGraph` for maintaining conversation context and a `SemanticCore` for intent, topic, and emotion detection.
+- **Knowledge Agent**: Fetches information from Wikipedia, DuckDuckGo, and a local knowledge base, with support for deep search and caching.
 - **Responsive Design**: Optimized for both desktop and mobile devices with a dark/light theme toggle.
-- **π-Resonance Analysis**: Processes user input with adaptive depth (1-3 levels) for tailored responses.
+- **Adaptive Responses**: Adjusts response depth and tone based on user input complexity and preferences (e.g., "deeper" or "simpler").
+simpler").
 - **SVG Integration**: Generates dynamic visualizations using the W3C SVG namespace (see [W3C SVG Specification](https://www.w3.org/TR/SVG/)).
 - **Extensible Architecture**: Supports future integration with GitHub agents for automated repository management.
 
@@ -52,10 +55,10 @@ Liana is a cutting-edge holographic AI interface (HoloNet v2.1) designed to deli
 - **Context Menu**: Right-click on messages to copy, search online, or save to memory.
 - **Special Commands**:
 - **кто ты** • Learn about Liana’s architecture and capabilities.
-- **настройки** • View current thinking settings (e.g., analysis depth).
-- **объясни квантовую физику** • for a knowledge-based response.
-- **посоветуй книгу** • for recommendations.
+- **как дела?** • View current thinking settings (e.g., analysis depth).
+- **проще** • (simpler) to simplify responses.
 - **глубже** • Trigger deeper analysis for complex queries.
+- **настройки** • (settings) to view current configuration.
 
 ### Technical Details
 
