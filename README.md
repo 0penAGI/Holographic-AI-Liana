@@ -3,7 +3,7 @@
 
 HoloNet is a holographic AI-powered chat interface designed for intuitive and engaging user interactions. It combines advanced natural language processing, contextual analysis, and a visually appealing UI with a focus on adaptability and humor.
 
-Check out the live : [HoloNet on GitHub Pages](https://0penagi.github.io/holographic-ai-liana/)  
+Check out the live alpha : [HoloNet on GitHub Pages](https://0penagi.github.io/Holographic-AI-Liana/)  
 
 ![Liana Logo](https://github.com/user-attachments/assets/3ff22b3e-d71c-494a-90b8-b6fcefa5fd94)
 
